@@ -17,6 +17,7 @@ final class Notifier: NSObject, UNUserNotificationCenterDelegate {
 
     func finished(_ title: String, result: ActionResult) {
         let outputs = result.files
+        PocLog.write("done: \(title) → \(outputs.map(\.path))\(result.message.map { " — \($0)" } ?? "")")
         guard !outputs.isEmpty || result.message != nil else { return }
         Task {
             do {
