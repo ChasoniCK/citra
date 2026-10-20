@@ -1,0 +1,49 @@
+name: Citra
+options:
+  bundleIdPrefix: com.chasonick
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+targets:
+  Citra:
+    type: application
+    platform: macOS
+    sources: [Citra]
+    info:
+      path: Citra/Info.plist
+      properties:
+        CFBundleDisplayName: Citra
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSUIElement: true
+        LSMinimumSystemVersion: "15.0"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.chasonick.Citra
+      configs:
+        # Release only: hosted Debug tests need library validation off.
+        Release:
+          ENABLE_HARDENED_RUNTIME: YES
+  CitraTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: [CitraTests]
+    dependencies:
+      - target: Citra
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Citra:
+    build:
+      targets:
+        Citra: all
+        CitraTests: [test]
+    test:
+      targets: [CitraTests]

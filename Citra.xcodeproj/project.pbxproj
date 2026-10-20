@@ -1,0 +1,400 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */; };
+		F764DC0A601E7DEB09C636AF /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3730592ACE721C03572BA049 /* SmokeTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		03FD5EB5647ECCBF82713111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 42DC7526F4713C14B004CAEC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B9B4BC1461EF4E639AD0C1FC;
+			remoteInfo = Citra;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitraApp.swift; sourceTree = "<group>"; };
+		0774F0A2D48C991C031DFF5F /* Citra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Citra.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3730592ACE721C03572BA049 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		57275E0E1AF873E59B60F70C /* CitraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CitraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		595691CF8D6B4A7AEE53BAD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		5FB93DAAB8C4DF1F9DDFC451 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		964ACF2503EAA8E309D3C7B1 /* Citra */ = {
+			isa = PBXGroup;
+			children = (
+				595691CF8D6B4A7AEE53BAD8 /* Info.plist */,
+				5FB93DAAB8C4DF1F9DDFC451 /* App */,
+			);
+			path = Citra;
+			sourceTree = "<group>";
+		};
+		9AFEDF27C227A9004C31CBF6 = {
+			isa = PBXGroup;
+			children = (
+				964ACF2503EAA8E309D3C7B1 /* Citra */,
+				E8F23A88D063A7DDE9CA5CEF /* CitraTests */,
+				BD6E359D603CB415C589305B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BD6E359D603CB415C589305B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0774F0A2D48C991C031DFF5F /* Citra.app */,
+				57275E0E1AF873E59B60F70C /* CitraTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E8F23A88D063A7DDE9CA5CEF /* CitraTests */ = {
+			isa = PBXGroup;
+			children = (
+				3730592ACE721C03572BA049 /* SmokeTests.swift */,
+			);
+			path = CitraTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4A8C704344C46135263331FD /* CitraTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1093C11DE253842ECDDE71CD /* Build configuration list for PBXNativeTarget "CitraTests" */;
+			buildPhases = (
+				D55E44FAB082648687E1FA95 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				843B69397516763AD0A17882 /* PBXTargetDependency */,
+			);
+			name = CitraTests;
+			packageProductDependencies = (
+			);
+			productName = CitraTests;
+			productReference = 57275E0E1AF873E59B60F70C /* CitraTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B9B4BC1461EF4E639AD0C1FC /* Citra */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D727DB57F0168F625795E47 /* Build configuration list for PBXNativeTarget "Citra" */;
+			buildPhases = (
+				F5EA7D626D2662DCA7DBDFD2 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Citra;
+			packageProductDependencies = (
+			);
+			productName = Citra;
+			productReference = 0774F0A2D48C991C031DFF5F /* Citra.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		42DC7526F4713C14B004CAEC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4A8C704344C46135263331FD = {
+						ProvisioningStyle = Manual;
+					};
+					B9B4BC1461EF4E639AD0C1FC = {
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = FEB762A46948D62CDCACC020 /* Build configuration list for PBXProject "Citra" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 9AFEDF27C227A9004C31CBF6;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BD6E359D603CB415C589305B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B9B4BC1461EF4E639AD0C1FC /* Citra */,
+				4A8C704344C46135263331FD /* CitraTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D55E44FAB082648687E1FA95 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F764DC0A601E7DEB09C636AF /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F5EA7D626D2662DCA7DBDFD2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		843B69397516763AD0A17882 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B9B4BC1461EF4E639AD0C1FC /* Citra */;
+			targetProxy = 03FD5EB5647ECCBF82713111 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10B4D969613F03563A08BBE0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.chasonick.CitraTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Citra.app/Contents/MacOS/Citra";
+			};
+			name = Release;
+		};
+		9D5B568C317D68D05C345AE9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Citra/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.chasonick.Citra;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B16D727E0A90BFF59CD89AAE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B8A895DF93C0A5AF635E284C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Citra/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.chasonick.Citra;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C9F79F9E51F713ED236CAC0B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.chasonick.CitraTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Citra.app/Contents/MacOS/Citra";
+			};
+			name = Debug;
+		};
+		E1BBD4C4A967CDE44C355432 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1093C11DE253842ECDDE71CD /* Build configuration list for PBXNativeTarget "CitraTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9F79F9E51F713ED236CAC0B /* Debug */,
+				10B4D969613F03563A08BBE0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5D727DB57F0168F625795E47 /* Build configuration list for PBXNativeTarget "Citra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B8A895DF93C0A5AF635E284C /* Debug */,
+				9D5B568C317D68D05C345AE9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FEB762A46948D62CDCACC020 /* Build configuration list for PBXProject "Citra" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B16D727E0A90BFF59CD89AAE /* Debug */,
+				E1BBD4C4A967CDE44C355432 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 42DC7526F4713C14B004CAEC /* Project object */;
+}
