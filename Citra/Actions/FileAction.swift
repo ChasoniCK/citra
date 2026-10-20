@@ -26,7 +26,7 @@ enum Registry {
     static func all(for mode: MenuMode) -> [any FileAction] {
         switch mode {
         case .conversion: ImageConverter.all + [ImageToPDF()]
-        case .tools: []
+        case .tools: [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata()]
         case .fileActions: [CopyFilesAction(), CopyPathAction()]
         }
     }

@@ -34,10 +34,12 @@ enum ImageCodec {
 
     /// First image of `url` re-encoded as `type` next to it, metadata and orientation kept;
     /// transparency is flattened on white for formats without alpha.
-    static func convert(_ url: URL, to type: UTType, fileExtension: String, quality: Double = 0.9) async throws -> URL {
+    static func convert(_ url: URL, to type: UTType, fileExtension: String, quality: Double = 0.9,
+                        nameSuffix: String? = nil) async throws -> URL {
         let src = try source(url)
+        let name = url.deletingPathExtension().lastPathComponent
         return try await OutputWriter.write(into: url.deletingLastPathComponent(),
-                                            baseName: url.deletingPathExtension().lastPathComponent,
+                                            baseName: nameSuffix.map { "\(name) \($0)" } ?? name,
                                             pathExtension: fileExtension) { temp in
             guard let dest = CGImageDestinationCreateWithURL(temp as CFURL, type.identifier as CFString, 1, nil)
             else { throw Failure.encodeFailed(fileExtension.uppercased()) }
@@ -127,3 +129,4 @@ struct ImageToPDF: FileAction {
         return outputs
     }
 }
+

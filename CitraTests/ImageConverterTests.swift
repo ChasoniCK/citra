@@ -21,7 +21,7 @@ struct ImageConverterTests {
                                          bytesPerRow: image.width * 4, space: CGColorSpace(name: CGColorSpace.sRGB)!,
                                          bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue))
         ctx.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-        let i = ((image.height - 1 - y) * image.width + x) * 4
+        let i = (y * image.width + x) * 4 // bitmap memory row 0 is the top row
         return (px[i], px[i + 1], px[i + 2])
     }
 

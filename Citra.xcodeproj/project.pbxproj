@@ -16,6 +16,7 @@
 		16515402B2E008585EF4961C /* FileNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919A28B349D3083FE0817301 /* FileNaming.swift */; };
 		171E5F677AD94CD5E26200ED /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB11B6207D6109A85BA31B4 /* Notifier.swift */; };
 		1848E9C589F4CABE269EB1F4 /* MenuModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114BF72D4578A43449A429F /* MenuModeTests.swift */; };
+		1C0B06D2ACC4301F9D8B016B /* ImageTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93424C65C0744925FF40D5BB /* ImageTools.swift */; };
 		210DEB3910536E8CB7324F3B /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */; };
 		2175B40B4B78CB603BC852CE /* DropOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982DE7C9B3D00825A9E8FA03 /* DropOperationTests.swift */; };
 		54C43F2B3AB6C5DD8E2AE590 /* ImageConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC83C3E0B937FE715114DB1F /* ImageConverterTests.swift */; };
@@ -28,6 +29,7 @@
 		95AF6519AEBF40278475A4C0 /* FileActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D708B57AB824EFFD453B65 /* FileActions.swift */; };
 		979753AC436CCD97BC67F9B8 /* PanelPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68D90EF3835C5598043FE6D /* PanelPlacement.swift */; };
 		A3EEF9578F5FD42AD78E4DED /* RadialLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */; };
+		A809010E1FFFA441CB11AFCE /* ImageToolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2C3F20C7D5AF7E9B79D561 /* ImageToolsTests.swift */; };
 		ABC90A9DD23187A9FAC46A3B /* FileAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1441EB09A4F1D4FAD8C677E /* FileAction.swift */; };
 		B63D684B2440FD18EEDF3CB7 /* DropOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */; };
 		B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */; };
@@ -70,6 +72,7 @@
 		7EB11B6207D6109A85BA31B4 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
 		90006D9E13444C860F65C897 /* DragMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragMonitor.swift; sourceTree = "<group>"; };
 		919A28B349D3083FE0817301 /* FileNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNaming.swift; sourceTree = "<group>"; };
+		93424C65C0744925FF40D5BB /* ImageTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTools.swift; sourceTree = "<group>"; };
 		982DE7C9B3D00825A9E8FA03 /* DropOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperationTests.swift; sourceTree = "<group>"; };
 		9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuView.swift; sourceTree = "<group>"; };
 		9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayoutTests.swift; sourceTree = "<group>"; };
@@ -90,6 +93,7 @@
 		DF0D7D190DE3CA89295281C6 /* FileTypeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypeResolver.swift; sourceTree = "<group>"; };
 		E2D11DBBAAB886942210A4EE /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelController.swift; sourceTree = "<group>"; };
+		EC2C3F20C7D5AF7E9B79D561 /* ImageToolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageToolsTests.swift; sourceTree = "<group>"; };
 		F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -109,6 +113,7 @@
 				C7D708B57AB824EFFD453B65 /* FileActions.swift */,
 				919A28B349D3083FE0817301 /* FileNaming.swift */,
 				C9F7722B28C006A183B3137F /* ImageActions.swift */,
+				93424C65C0744925FF40D5BB /* ImageTools.swift */,
 				411F8A230064763BE0FE450A /* OutputWriter.swift */,
 			);
 			path = Actions;
@@ -204,6 +209,7 @@
 				B505454B8EA3488C8E116253 /* FileNamingTests.swift */,
 				D09BC96DD3F722B484165CF5 /* FileTypeResolverTests.swift */,
 				DC83C3E0B937FE715114DB1F /* ImageConverterTests.swift */,
+				EC2C3F20C7D5AF7E9B79D561 /* ImageToolsTests.swift */,
 				4114BF72D4578A43449A429F /* MenuModeTests.swift */,
 				D6A8AE27529338505C419DA9 /* OutputWriterTests.swift */,
 				B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */,
@@ -309,6 +315,7 @@
 				8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */,
 				1553C51A60A381ECDA75E07D /* FileTypeResolverTests.swift in Sources */,
 				54C43F2B3AB6C5DD8E2AE590 /* ImageConverterTests.swift in Sources */,
+				A809010E1FFFA441CB11AFCE /* ImageToolsTests.swift in Sources */,
 				1848E9C589F4CABE269EB1F4 /* MenuModeTests.swift in Sources */,
 				94D49DCB44BC9BC5147463C9 /* OutputWriterTests.swift in Sources */,
 				F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */,
@@ -334,6 +341,7 @@
 				16515402B2E008585EF4961C /* FileNaming.swift in Sources */,
 				C1D2DC0CEAEE92A755A1BA3D /* FileTypeResolver.swift in Sources */,
 				DC4EDE88C5A9A436F31C0D87 /* ImageActions.swift in Sources */,
+				1C0B06D2ACC4301F9D8B016B /* ImageTools.swift in Sources */,
 				0EC09BEE13A6B0372FB30284 /* MenuMode.swift in Sources */,
 				171E5F677AD94CD5E26200ED /* Notifier.swift in Sources */,
 				BFF079C07C8BFA0CABB6F70A /* OutputWriter.swift in Sources */,

@@ -25,10 +25,12 @@ struct TestFolder {
     }
 
     /// 16×16 image: left half transparent, right half opaque red; `type` picks the encoder.
+    /// `noise` fills it with random opaque pixels instead (hard to compress).
     func image(_ name: String, type: UTType = .png, width: Int = 16, height: Int = 16,
-               properties: [CFString: Any] = [:]) throws -> URL {
+               properties: [CFString: Any] = [:], noise: Bool = false) throws -> URL {
         var px = [UInt8](repeating: 0, count: width * height * 4)
         for y in 0..<height { for x in width / 2..<width { let i = (y * width + x) * 4; px[i] = 255; px[i + 3] = 255 } }
+        if noise { for i in px.indices { px[i] = i % 4 == 3 ? 255 : .random(in: 0...255) } }
         let ctx = try #require(CGContext(data: &px, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4,
                                          space: CGColorSpace(name: CGColorSpace.sRGB)!, // safe: sRGB always exists
                                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
