@@ -4,7 +4,7 @@
 
 **Goal:** Menu bar with Enable / Settings… / Quit, and a SwiftUI Settings window whose values actually drive the app.
 
-**Spec:** `PROMPT.md` `<settings>`. **Tests:** only risky logic (agreed with the user): modifier mapping and output location.
+**Tests:** only risky logic (agreed with the user): modifier mapping and output location.
 
 ## Decisions (mine)
 

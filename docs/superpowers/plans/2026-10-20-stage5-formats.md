@@ -3,7 +3,7 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** The formats and tools the spec lists for Stage 5, each registered through `Registry` only.
-**Spec:** `PROMPT.md` `<plan>` Stage 5, `<file_processing>` (FFmpeg, GIF). **Tests:** risky logic only.
+**Tests:** risky logic only.
 
 ## Scope (mine, from the spec's list)
 

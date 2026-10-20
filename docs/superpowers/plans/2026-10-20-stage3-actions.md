@@ -8,8 +8,6 @@
 
 **Tech Stack:** Swift 6, ImageIO, PDFKit, AVFoundation, Compression (raw DEFLATE), `/usr/bin/tar`, UserNotifications, AppKit (sharing, open panel, shelf panel), Swift Testing.
 
-**Spec:** `PROMPT.md` `<plan>` Stage 3, `<architecture>`, `<file_actions>`, `<file_processing>`.
-
 ## Global Constraints
 
 - The original is never modified or deleted (only Move, explicitly chosen).

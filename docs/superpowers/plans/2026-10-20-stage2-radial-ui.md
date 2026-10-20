@@ -8,7 +8,7 @@
 
 **Tech Stack:** Swift 6, SwiftUI, AppKit, Swift Testing, XcodeGen.
 
-**Spec:** `PROMPT.md` `<design>`; Stage 1 lessons in `docs/feasibility.md`.
+**Context:** Stage 1 lessons in `docs/feasibility.md`.
 
 ## Global Constraints
 

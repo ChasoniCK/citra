@@ -1,6 +1,6 @@
 # Citra — прогресс
 
-Спецификация: `PROMPT.md`. План этапа 1: `docs/superpowers/plans/2026-10-20-stage1-poc.md`.
+План этапа 1: `docs/superpowers/plans/2026-10-20-stage1-poc.md`.
 Результаты по реализуемости: `docs/feasibility.md`.
 
 ## Итог (2026-10-20)
