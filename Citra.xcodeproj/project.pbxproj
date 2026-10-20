@@ -10,14 +10,19 @@
 		0EC09BEE13A6B0372FB30284 /* MenuMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB1B3C23DDBA6BBAFE8FDF2 /* MenuMode.swift */; };
 		16515402B2E008585EF4961C /* FileNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919A28B349D3083FE0817301 /* FileNaming.swift */; };
 		1848E9C589F4CABE269EB1F4 /* MenuModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114BF72D4578A43449A429F /* MenuModeTests.swift */; };
+		210DEB3910536E8CB7324F3B /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */; };
 		2175B40B4B78CB603BC852CE /* DropOperationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982DE7C9B3D00825A9E8FA03 /* DropOperationTests.swift */; };
+		641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */; };
+		717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90006D9E13444C860F65C897 /* DragMonitor.swift */; };
 		73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */; };
 		8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B505454B8EA3488C8E116253 /* FileNamingTests.swift */; };
 		979753AC436CCD97BC67F9B8 /* PanelPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68D90EF3835C5598043FE6D /* PanelPlacement.swift */; };
 		A3EEF9578F5FD42AD78E4DED /* RadialLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */; };
 		AAAEBB544326A5BD0F847A94 /* ImageConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F871887DE1A5C1DC654A66 /* ImageConversion.swift */; };
 		B63D684B2440FD18EEDF3CB7 /* DropOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */; };
+		B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */; };
 		D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */; };
+		D29982F7E0E79A7D0F092DCC /* PocLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F67CF9A0485DFDDA295E8D /* PocLog.swift */; };
 		D9EB154BC091D67A8A0BFFC0 /* ImageConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B94A316CD15379F967CBFF /* ImageConversionTests.swift */; };
 		F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */; };
 /* End PBXBuildFile section */
@@ -37,21 +42,34 @@
 		0774F0A2D48C991C031DFF5F /* Citra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Citra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20B94A316CD15379F967CBFF /* ImageConversionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConversionTests.swift; sourceTree = "<group>"; };
 		3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayout.swift; sourceTree = "<group>"; };
+		33F67CF9A0485DFDDA295E8D /* PocLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocLog.swift; sourceTree = "<group>"; };
 		4114BF72D4578A43449A429F /* MenuModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModeTests.swift; sourceTree = "<group>"; };
 		57275E0E1AF873E59B60F70C /* CitraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CitraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		595691CF8D6B4A7AEE53BAD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6DB1B3C23DDBA6BBAFE8FDF2 /* MenuMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuMode.swift; sourceTree = "<group>"; };
+		7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		90006D9E13444C860F65C897 /* DragMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragMonitor.swift; sourceTree = "<group>"; };
 		919A28B349D3083FE0817301 /* FileNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNaming.swift; sourceTree = "<group>"; };
 		982DE7C9B3D00825A9E8FA03 /* DropOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperationTests.swift; sourceTree = "<group>"; };
+		9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuView.swift; sourceTree = "<group>"; };
 		9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayoutTests.swift; sourceTree = "<group>"; };
 		B505454B8EA3488C8E116253 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
 		B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacementTests.swift; sourceTree = "<group>"; };
 		D68D90EF3835C5598043FE6D /* PanelPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacement.swift; sourceTree = "<group>"; };
 		DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperation.swift; sourceTree = "<group>"; };
 		E1F871887DE1A5C1DC654A66 /* ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConversion.swift; sourceTree = "<group>"; };
+		E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		045133F47035B624BAB73F18 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				33F67CF9A0485DFDDA295E8D /* PocLog.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
 		10B2FC08D9443CDC206495EB /* Actions */ = {
 			isa = PBXGroup;
 			children = (
@@ -64,6 +82,7 @@
 		5FB93DAAB8C4DF1F9DDFC451 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */,
 				06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */,
 			);
 			path = App;
@@ -77,6 +96,7 @@
 				5FB93DAAB8C4DF1F9DDFC451 /* App */,
 				A0636BE92AD042F532A7ACB8 /* Drag */,
 				D23F4A92832816DEE7B9211B /* Menu */,
+				045133F47035B624BAB73F18 /* Support */,
 			);
 			path = Citra;
 			sourceTree = "<group>";
@@ -93,6 +113,7 @@
 		A0636BE92AD042F532A7ACB8 /* Drag */ = {
 			isa = PBXGroup;
 			children = (
+				90006D9E13444C860F65C897 /* DragMonitor.swift */,
 				6DB1B3C23DDBA6BBAFE8FDF2 /* MenuMode.swift */,
 			);
 			path = Drag;
@@ -113,6 +134,8 @@
 				DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */,
 				D68D90EF3835C5598043FE6D /* PanelPlacement.swift */,
 				3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */,
+				E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */,
+				9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -223,13 +246,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				210DEB3910536E8CB7324F3B /* AppCoordinator.swift in Sources */,
 				D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */,
+				717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */,
 				B63D684B2440FD18EEDF3CB7 /* DropOperation.swift in Sources */,
 				16515402B2E008585EF4961C /* FileNaming.swift in Sources */,
 				AAAEBB544326A5BD0F847A94 /* ImageConversion.swift in Sources */,
 				0EC09BEE13A6B0372FB30284 /* MenuMode.swift in Sources */,
 				979753AC436CCD97BC67F9B8 /* PanelPlacement.swift in Sources */,
+				D29982F7E0E79A7D0F092DCC /* PocLog.swift in Sources */,
 				73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */,
+				B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */,
+				641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
