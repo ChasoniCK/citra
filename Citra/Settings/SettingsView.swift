@@ -24,7 +24,7 @@ private struct GeneralSettings: View {
     @AppStorage(AppSettings.Key.outputFolder) private var folder = ""
     @State private var loginItem = SMAppService.mainApp.status
     @State private var loginError: String?
-    @State private var notificationsDenied = false
+    @State private var notificationStatus = UNAuthorizationStatus.notDetermined
 
     var body: some View {
         Form {
@@ -57,14 +57,22 @@ private struct GeneralSettings: View {
                     }
                 }
                 Toggle("Notify when a task finishes", isOn: $notifications)
-                if notifications, notificationsDenied {
+                if notifications {
                     HStack {
-                        Text("Notifications for Citra are off in System Settings.").foregroundStyle(.secondary)
+                        Text(notificationText).foregroundStyle(.secondary)
                         Spacer()
-                        Button("Open") {
-                            if let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension?id=\(Bundle.main.bundleIdentifier ?? "")") {
-                                NSWorkspace.shared.open(url)
+                        switch notificationStatus {
+                        case .notDetermined:
+                            Button("Ask Now") {
+                                Task {
+                                    _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+                                    await refreshNotificationStatus()
+                                }
                             }
+                        case .denied:
+                            Button("Open Notification Settings") { Notifier.openSystemSettings() }
+                        default:
+                            EmptyView()
                         }
                     }
                 }
@@ -75,9 +83,23 @@ private struct GeneralSettings: View {
             }
         }
         .formStyle(.grouped)
-        .task {
-            notificationsDenied = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus == .denied
+        .task { await refreshNotificationStatus() }
+        // Coming back from System Settings: show the new state without reopening the window.
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            Task { await refreshNotificationStatus() }
         }
+    }
+
+    private var notificationText: String {
+        switch notificationStatus {
+        case .notDetermined: "macOS has not asked yet."
+        case .denied: "Off for Citra in System Settings."
+        default: "Allowed."
+        }
+    }
+
+    private func refreshNotificationStatus() async {
+        notificationStatus = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
     }
 
     private func setLaunchAtLogin(_ on: Bool) {

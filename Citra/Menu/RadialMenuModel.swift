@@ -91,6 +91,9 @@ final class RadialMenuModel {
     var hovered: RingTarget?
     var idleCenterText = ""
     var phase = RingPhase.hidden
+    /// Appearance size captured for this ring. Views take it as an input: `RingMetrics` alone is not
+    /// observable, so the disc and pill kept their old size when only the setting changed.
+    var scale: CGFloat = 1
     /// Bumped on a mode switch so the sector group cross-fades instead of morphing.
     var generation = 0
     /// The sector a file was dropped on; stays lit while the ring fades out.

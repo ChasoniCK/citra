@@ -65,6 +65,7 @@ final class RadialMenuPanelController {
         isShown = true
         dismissToken += 1
         RingMetrics.capture() // Appearance settings apply from this ring on
+        model.scale = RingMetrics.scale
         model.items = items
         model.hovered = nil
         place(centeredAt: NSEvent.mouseLocation, size: CGSize(width: model.panelSide, height: model.panelSide))

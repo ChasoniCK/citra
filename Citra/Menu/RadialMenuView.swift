@@ -51,14 +51,14 @@ struct RadialMenuView: View {
         let palette = RingPalette.of(scheme, accent: RingMetrics.accent)
         let layout = model.layout
         ZStack {
-            Disc(palette: palette)
+            Disc(palette: palette, scale: model.scale)
 
             ZStack {
                 ForEach(Array(model.primaryItems.enumerated()), id: \.element.id) { index, item in
                     SectorView(shape: SectorShape(path: layout.sectorPath(index)), item: item,
                                direction: layout.centerAngle(of: index), labelPoint: layout.labelPoint(of: index),
                                labelWidth: layout.labelWidth, isHovered: model.hovered == .primary(index),
-                               isConfirmed: model.confirmed == .primary(index), palette: palette)
+                               isConfirmed: model.confirmed == .primary(index), palette: palette, scale: model.scale)
                         .equatable()
                 }
             }
@@ -70,7 +70,7 @@ struct RadialMenuView: View {
                     .transition(.opacity.combined(with: .scale(scale: 0.96)))
             }
 
-            CenterPill(text: model.centerText, palette: palette)
+            CenterPill(text: model.centerText, palette: palette, scale: model.scale)
         }
         .frame(width: model.panelSide, height: model.panelSide)
         .scaleEffect(model.phase.scale)
@@ -82,6 +82,7 @@ struct RadialMenuView: View {
 /// The dark annulus from the hole edge to the disc edge, with a thin edge highlight and a soft shadow.
 private struct Disc: View {
     let palette: RingPalette
+    let scale: CGFloat // an input so SwiftUI redraws on a size change
 
     var body: some View {
         ZStack {
@@ -110,16 +111,17 @@ struct SectorView: View, Equatable {
     let isHovered: Bool
     let isConfirmed: Bool
     let palette: RingPalette
+    let scale: CGFloat
 
     nonisolated static func == (a: Self, b: Self) -> Bool {
         a.item == b.item && a.isHovered == b.isHovered && a.isConfirmed == b.isConfirmed
             && a.direction == b.direction && a.labelWidth == b.labelWidth && a.shape.path == b.shape.path
-            && a.palette == b.palette
+            && a.palette == b.palette && a.scale == b.scale
     }
 
     var body: some View {
         let lit = isHovered || isConfirmed
-        let push: CGFloat = isHovered ? 4 * RingMetrics.scale : 0
+        let push: CGFloat = isHovered ? 4 * scale : 0
         ZStack {
             shape
                 .fill(LinearGradient(colors: [palette.sectorTop, palette.sectorBottom], startPoint: .top, endPoint: .bottom)
@@ -131,7 +133,7 @@ struct SectorView: View, Equatable {
                 .stroke(LinearGradient(colors: [palette.sectorEdgeTop, palette.sectorEdgeBottom], startPoint: .top, endPoint: .bottom),
                         lineWidth: 1)
                 .opacity(lit ? 0.6 : 1)
-            SectorLabel(item: item, width: labelWidth, color: lit ? .white : palette.label)
+            SectorLabel(item: item, width: labelWidth, color: lit ? .white : palette.label, scale: scale)
                 .offset(x: labelPoint.x, y: -labelPoint.y)
         }
         .brightness(isConfirmed ? 0.12 : 0)
@@ -145,14 +147,15 @@ private struct SectorLabel: View {
     let item: RadialMenuItem
     let width: CGFloat
     let color: Color
+    let scale: CGFloat
 
     var body: some View {
-        VStack(spacing: 4 * RingMetrics.scale) {
+        VStack(spacing: 4 * scale) {
             if let symbol = item.symbol {
-                Image(systemName: symbol).font(.system(size: 17 * RingMetrics.scale, weight: .medium))
+                Image(systemName: symbol).font(.system(size: 17 * scale, weight: .medium))
             }
             Text(item.title.uppercased())
-                .font(.system(size: (item.symbol == nil ? 15 : 10) * RingMetrics.scale, weight: .bold))
+                .font(.system(size: (item.symbol == nil ? 15 : 10) * scale, weight: .bold))
                 .tracking(item.symbol == nil ? 0.3 : 0.5)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
@@ -182,7 +185,7 @@ private struct OverflowArcView: View {
                 SectorView(shape: SectorShape(path: arc.sectorPath(index)), item: item,
                            direction: arc.centerAngle(of: index), labelPoint: arc.labelPoint(of: index),
                            labelWidth: arc.labelWidth, isHovered: model.hovered == .overflow(index),
-                           isConfirmed: model.confirmed == .overflow(index), palette: palette)
+                           isConfirmed: model.confirmed == .overflow(index), palette: palette, scale: model.scale)
                     .equatable()
             }
         }
@@ -192,16 +195,16 @@ private struct OverflowArcView: View {
 private struct CenterPill: View {
     let text: String
     let palette: RingPalette
+    let scale: CGFloat
 
     var body: some View {
         Text(text)
-            .font(.system(size: 13 * RingMetrics.scale, weight: .semibold))
+            .font(.system(size: 13 * scale, weight: .semibold))
             .foregroundStyle(palette.pillText)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
-            .padding(.horizontal, 14 * RingMetrics.scale)
-            .frame(minWidth: 84 * RingMetrics.scale, maxWidth: 100 * RingMetrics.scale,
-                   minHeight: 39 * RingMetrics.scale, maxHeight: 39 * RingMetrics.scale)
+            .padding(.horizontal, 14 * scale)
+            .frame(minWidth: 84 * scale, maxWidth: 100 * scale, minHeight: 39 * scale, maxHeight: 39 * scale)
             .background {
                 Capsule()
                     .fill(LinearGradient(colors: [palette.pillTop, palette.pillBottom], startPoint: .top, endPoint: .bottom)
