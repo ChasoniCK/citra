@@ -14,7 +14,6 @@ final class RadialMenuPanelController {
     let panel: NSPanel = RingPanel()
 
     private let dropView = DropTargetView()
-    private let backdrop = RingBackdrop()
     private(set) var isShown = false
     private var acceptsDrops = false
     /// Bumped whenever a pending fade-out must not order the panel out any more.
@@ -23,9 +22,6 @@ final class RadialMenuPanelController {
     init() {
         let side = RingPanel.initialSide
         let container = NSView(frame: CGRect(x: 0, y: 0, width: side, height: side))
-        backdrop.setFrameOrigin(CGPoint(x: (side - backdrop.frame.width) / 2, y: (side - backdrop.frame.height) / 2))
-        backdrop.autoresizingMask = [.minXMargin, .maxXMargin, .minYMargin, .maxYMargin] // stays centered on resize
-        container.addSubview(backdrop)
         let hosting = NSHostingView(rootView: RadialMenuView(model: model))
         hosting.sizingOptions = [] // the controller sizes the panel (with or without the overflow arc)
         for view in [hosting, dropView] as [NSView] {
@@ -69,21 +65,13 @@ final class RadialMenuPanelController {
         model.items = items
         model.hovered = nil
         place(centeredAt: NSEvent.mouseLocation, size: CGSize(width: model.panelSide, height: model.panelSide))
-        backdrop.fit()
-        guard RingMetrics.motion != .off else {
-            model.phase = .shown
-            backdrop.alphaValue = 1
-            panel.orderFrontRegardless()
-            return
-        }
-        model.phase = .hidden
-        backdrop.alphaValue = 0
+        model.phase = RingMetrics.motion == .off ? .shown : .hidden
         panel.orderFrontRegardless()
+        guard RingMetrics.motion != .off else { return }
         // Next run-loop pass, so the first frame on screen is the start state and the appear animates.
         DispatchQueue.main.async { [weak self] in
             guard let self, isShown else { return }
             withAnimation(RingMotion.scaled(.spring(duration: 0.22, bounce: 0.18))) { model.phase = .shown }
-            fadeBackdrop(to: 1, duration: RingMotion.duration(0.16))
         }
     }
 
@@ -104,7 +92,6 @@ final class RadialMenuPanelController {
         let token = dismissToken
         guard RingMetrics.motion != .off else { return finishHiding() }
         withAnimation(RingMotion.scaled(.easeIn(duration: 0.18))) { model.phase = .dismissed }
-        fadeBackdrop(to: 0, duration: RingMotion.duration(0.18))
         DispatchQueue.main.asyncAfter(deadline: .now() + RingMotion.duration(0.2)) { [weak self] in
             guard let self, dismissToken == token else { return }
             finishHiding()
@@ -117,13 +104,6 @@ final class RadialMenuPanelController {
         model.hovered = nil
         model.confirmed = nil
         model.phase = .hidden
-    }
-
-    private func fadeBackdrop(to alpha: CGFloat, duration: TimeInterval) {
-        NSAnimationContext.runAnimationGroup { context in
-            context.duration = duration
-            backdrop.animator().alphaValue = alpha
-        }
     }
 
     private func place(centeredAt point: CGPoint, size: CGSize) {

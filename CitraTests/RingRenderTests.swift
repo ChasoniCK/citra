@@ -5,7 +5,7 @@ import UniformTypeIdentifiers
 @testable import Citra
 
 /// Renders the ring to PNGs for side-by-side review with `references/` — no screen capture involved.
-/// The behind-window blur is AppKit and does not render here; a flat Finder-like background stands in.
+/// Nothing lies behind the panel here; a flat Finder-like background stands in.
 @MainActor
 struct RingRenderTests {
     static let outDir = FileManager.default.temporaryDirectory.appending(path: "citra-ring-previews")

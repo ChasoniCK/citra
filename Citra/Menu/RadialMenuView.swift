@@ -1,20 +1,12 @@
 import SwiftUI
 
-/// Colors measured from the references (dark) and a matching light variant.
+/// The colors around the glass, dark and light; the sectors and the pill are system glass.
 struct RingPalette: Equatable {
-    var disc: Color
-    var discEdge: Color
+    /// Under the sectors: near-invisible, but not alpha 0, so a drop between two sectors does not fall through.
+    var backing: Color
     var hole: Color
-    var sectorTop: Color
-    var sectorBottom: Color
-    var sectorEdgeTop: Color
-    var sectorEdgeBottom: Color
-    var innerShadow: Color
+    var holeEdge: Color
     var label: Color
-    var pillTop: Color
-    var pillBottom: Color
-    var pillEdge: Color
-    var pillText: Color
     var accentTop = Accent.orange.gradient.top
     var accentBottom = Accent.orange.gradient.bottom
 
@@ -26,23 +18,12 @@ struct RingPalette: Equatable {
 
     private static func base(_ scheme: ColorScheme) -> RingPalette {
         scheme == .dark
-            ? RingPalette(disc: Color(white: 0.09, opacity: 0.62), discEdge: .white.opacity(0.14), hole: .black.opacity(0.14),
-                          sectorTop: .white.opacity(0.13), sectorBottom: .white.opacity(0.075),
-                          sectorEdgeTop: .white.opacity(0.22), sectorEdgeBottom: .white.opacity(0.04),
-                          innerShadow: .black.opacity(0.35), label: .white.opacity(0.93),
-                          pillTop: .white.opacity(0.2), pillBottom: .white.opacity(0.11), pillEdge: .white.opacity(0.24),
-                          pillText: .white)
-            : RingPalette(disc: Color(white: 0.97, opacity: 0.55), discEdge: .black.opacity(0.1), hole: .white.opacity(0.18),
-                          sectorTop: .white.opacity(0.85), sectorBottom: .white.opacity(0.6),
-                          sectorEdgeTop: .white, sectorEdgeBottom: .black.opacity(0.08),
-                          innerShadow: .black.opacity(0.12), label: .black.opacity(0.78),
-                          pillTop: .white.opacity(0.95), pillBottom: .white.opacity(0.75), pillEdge: .black.opacity(0.08),
-                          pillText: .black.opacity(0.8))
+            ? RingPalette(backing: .black.opacity(0.03), hole: .black.opacity(0.14), holeEdge: .white.opacity(0.08), label: .white.opacity(0.93))
+            : RingPalette(backing: .black.opacity(0.03), hole: .white.opacity(0.18), holeEdge: .black.opacity(0.06), label: .black.opacity(0.78))
     }
 }
 
-/// The ring as drawn by SwiftUI. The behind-window blur under the disc is `RingBackdrop` (AppKit),
-/// because a SwiftUI material goes flat in an app that is never active.
+/// The ring as drawn by SwiftUI: every sector and the center pill are Liquid Glass.
 struct RadialMenuView: View {
     let model: RadialMenuModel
     @Environment(\.colorScheme) private var scheme
@@ -53,13 +34,15 @@ struct RadialMenuView: View {
         ZStack {
             Disc(palette: palette, scale: model.scale)
 
-            ZStack {
-                ForEach(Array(model.primaryItems.enumerated()), id: \.element.id) { index, item in
-                    SectorView(shape: SectorShape(path: layout.sectorPath(index)), item: item,
-                               direction: layout.centerAngle(of: index), labelPoint: layout.labelPoint(of: index),
-                               labelWidth: layout.labelWidth, isHovered: model.hovered == .primary(index),
-                               isConfirmed: model.confirmed == .primary(index), palette: palette, scale: model.scale)
-                        .equatable()
+            GlassEffectContainer(spacing: 0) { // 0: neighbouring sectors never melt into each other
+                ZStack { // the container alone stacks its content vertically
+                    ForEach(Array(model.primaryItems.enumerated()), id: \.element.id) { index, item in
+                        SectorView(shape: SectorShape(path: layout.sectorPath(index)), item: item,
+                                   direction: layout.centerAngle(of: index), labelPoint: layout.labelPoint(of: index),
+                                   labelWidth: layout.labelWidth, isHovered: model.hovered == .primary(index),
+                                   isConfirmed: model.confirmed == .primary(index), palette: palette, scale: model.scale)
+                            .equatable()
+                    }
                 }
             }
             .id(model.generation)
@@ -79,7 +62,7 @@ struct RadialMenuView: View {
     }
 }
 
-/// The dark annulus from the hole edge to the disc edge, with a thin edge highlight and a soft shadow.
+/// What lies under the glass: a near-invisible annulus and the tinted hole.
 private struct Disc: View {
     let palette: RingPalette
     let scale: CGFloat // an input so SwiftUI redraws on a size change
@@ -87,15 +70,11 @@ private struct Disc: View {
     var body: some View {
         ZStack {
             Annulus(inner: RingMetrics.hole, outer: RingMetrics.disc)
-                .fill(palette.disc, style: FillStyle(eoFill: true))
-                .shadow(color: .black.opacity(0.35), radius: 12, y: 4)
-            Circle()
-                .strokeBorder(palette.discEdge, lineWidth: 1)
-                .frame(width: RingMetrics.disc * 2, height: RingMetrics.disc * 2)
+                .fill(palette.backing, style: FillStyle(eoFill: true))
             // Tinted, not empty: a fully transparent hole would let drops fall through to the window below.
             Circle()
                 .fill(palette.hole)
-                .overlay(Circle().strokeBorder(palette.discEdge.opacity(0.6), lineWidth: 1))
+                .overlay(Circle().strokeBorder(palette.holeEdge, lineWidth: 1))
                 .frame(width: RingMetrics.hole * 2, height: RingMetrics.hole * 2)
         }
     }
@@ -122,23 +101,16 @@ struct SectorView: View, Equatable {
     var body: some View {
         let lit = isHovered || isConfirmed
         let push: CGFloat = isHovered ? 4 * scale : 0
-        ZStack {
-            shape
-                .fill(LinearGradient(colors: [palette.sectorTop, palette.sectorBottom], startPoint: .top, endPoint: .bottom)
-                    .shadow(.inner(color: palette.innerShadow, radius: 2, y: 1)))
-            shape
-                .fill(LinearGradient(colors: [palette.accentTop, palette.accentBottom], startPoint: .top, endPoint: .bottom))
-                .opacity(lit ? 1 : 0)
-            shape
-                .stroke(LinearGradient(colors: [palette.sectorEdgeTop, palette.sectorEdgeBottom], startPoint: .top, endPoint: .bottom),
-                        lineWidth: 1)
-                .opacity(lit ? 0.6 : 1)
-            SectorLabel(item: item, width: labelWidth, color: lit ? .white : palette.label, scale: scale)
-                .offset(x: labelPoint.x, y: -labelPoint.y)
-        }
-        .brightness(isConfirmed ? 0.12 : 0)
-        .offset(x: push * sin(direction), y: -push * cos(direction))
-        .animation(RingMotion.scaled(.spring(duration: 0.18, bounce: 0.2)), value: isHovered)
+        SectorLabel(item: item, width: labelWidth, color: lit ? .white : palette.label, scale: scale)
+            .offset(x: labelPoint.x, y: -labelPoint.y)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Our own accent fill: a glass tint renders gray in an app that is never active.
+            .background(shape.fill(LinearGradient(colors: [palette.accentTop, palette.accentBottom], startPoint: .top, endPoint: .bottom))
+                .opacity(lit ? 1 : 0))
+            .brightness(isConfirmed ? 0.12 : 0)
+            .glassEffect(.regular, in: shape)
+            .offset(x: push * sin(direction), y: -push * cos(direction))
+            .animation(RingMotion.scaled(.spring(duration: 0.18, bounce: 0.2)), value: isHovered)
     }
 }
 
@@ -176,17 +148,17 @@ private struct OverflowArcView: View {
                                      inner: arc.innerRadius - 5, outer: arc.outerRadius + 5, gap: 0,
                                      outerCorner: 18, innerCorner: 12)
         ZStack {
-            // No behind-window blur out here (overflow is rare); a denser tint keeps it legible.
-            SectorShape(path: band)
-                .fill(palette.disc.opacity(1.35))
-                .shadow(color: .black.opacity(0.35), radius: 12, y: 4)
-            SectorShape(path: band).stroke(palette.discEdge, lineWidth: 1)
-            ForEach(Array(model.overflowItems.enumerated()), id: \.element.id) { index, item in
-                SectorView(shape: SectorShape(path: arc.sectorPath(index)), item: item,
-                           direction: arc.centerAngle(of: index), labelPoint: arc.labelPoint(of: index),
-                           labelWidth: arc.labelWidth, isHovered: model.hovered == .overflow(index),
-                           isConfirmed: model.confirmed == .overflow(index), palette: palette, scale: model.scale)
-                    .equatable()
+            SectorShape(path: band).fill(palette.backing)
+            GlassEffectContainer(spacing: 0) {
+                ZStack {
+                    ForEach(Array(model.overflowItems.enumerated()), id: \.element.id) { index, item in
+                        SectorView(shape: SectorShape(path: arc.sectorPath(index)), item: item,
+                                   direction: arc.centerAngle(of: index), labelPoint: arc.labelPoint(of: index),
+                                   labelWidth: arc.labelWidth, isHovered: model.hovered == .overflow(index),
+                                   isConfirmed: model.confirmed == .overflow(index), palette: palette, scale: model.scale)
+                            .equatable()
+                    }
+                }
             }
         }
     }
@@ -200,17 +172,12 @@ private struct CenterPill: View {
     var body: some View {
         Text(text)
             .font(.system(size: 13 * scale, weight: .semibold))
-            .foregroundStyle(palette.pillText)
+            .foregroundStyle(palette.label)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
             .padding(.horizontal, 14 * scale)
             .frame(minWidth: 84 * scale, maxWidth: 100 * scale, minHeight: 39 * scale, maxHeight: 39 * scale)
-            .background {
-                Capsule()
-                    .fill(LinearGradient(colors: [palette.pillTop, palette.pillBottom], startPoint: .top, endPoint: .bottom)
-                        .shadow(.inner(color: palette.innerShadow, radius: 2, y: 1)))
-                    .overlay(Capsule().strokeBorder(palette.pillEdge, lineWidth: 1))
-            }
+            .glassEffect(.regular, in: Capsule())
             .fixedSize()
             .contentTransition(.opacity)
             .animation(RingMotion.scaled(.easeOut(duration: 0.12)), value: text)

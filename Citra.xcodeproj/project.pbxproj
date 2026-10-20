@@ -29,7 +29,6 @@
 		717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90006D9E13444C860F65C897 /* DragMonitor.swift */; };
 		73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */; };
 		843A7DCDA634573F5A393B07 /* TestZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C699FA37872BB2B3DFFAC43D /* TestZip.swift */; };
-		8600CB55399A14322A953C2B /* RingBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3674297301CC69AB1EB2C938 /* RingBackdrop.swift */; };
 		8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B505454B8EA3488C8E116253 /* FileNamingTests.swift */; };
 		8BA7462546A93800823D636D /* FileActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635E56F3B35F81C57DEAE7D0 /* FileActionsTests.swift */; };
 		94D49DCB44BC9BC5147463C9 /* OutputWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8AE27529338505C419DA9 /* OutputWriterTests.swift */; };
@@ -84,7 +83,6 @@
 		30128D5300DE1561E6708C46 /* Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zip.swift; sourceTree = "<group>"; };
 		3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayout.swift; sourceTree = "<group>"; };
 		33F67CF9A0485DFDDA295E8D /* PocLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocLog.swift; sourceTree = "<group>"; };
-		3674297301CC69AB1EB2C938 /* RingBackdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBackdrop.swift; sourceTree = "<group>"; };
 		3F2EA16542447DBADBC77580 /* RepackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepackTests.swift; sourceTree = "<group>"; };
 		40A08C070F7720EB6B6654C4 /* Stage5Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage5Tests.swift; sourceTree = "<group>"; };
 		4114BF72D4578A43449A429F /* MenuModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModeTests.swift; sourceTree = "<group>"; };
@@ -273,7 +271,6 @@
 				9FB88BC382160C69197801B0 /* RadialMenuModel.swift */,
 				E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */,
 				9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */,
-				3674297301CC69AB1EB2C938 /* RingBackdrop.swift */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -449,7 +446,6 @@
 				B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */,
 				641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */,
 				AD9EE0EE0AED925DDFE909EA /* Repack.swift in Sources */,
-				8600CB55399A14322A953C2B /* RingBackdrop.swift in Sources */,
 				BC89D3236235246CB2B8D810 /* SettingsView.swift in Sources */,
 				67F52E284373C9432432B2BA /* Shelf.swift in Sources */,
 				00EC7CD40DF15ACCF4C6B206 /* TaskManager.swift in Sources */,
@@ -555,7 +551,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -645,7 +641,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
