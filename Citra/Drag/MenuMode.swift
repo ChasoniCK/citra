@@ -4,6 +4,14 @@ import AppKit
 enum MenuMode: CaseIterable, Sendable {
     case conversion, tools, fileActions
 
+    var title: String {
+        switch self {
+        case .conversion: "Conversion"
+        case .tools: "Tools"
+        case .fileActions: "File Actions"
+        }
+    }
+
     /// Default mapping (⌘ conversion, ⇧ tools, ⌃ file actions), fixed priority ⌘ > ⇧ > ⌃.
     static func resolve(_ flags: NSEvent.ModifierFlags) -> MenuMode? { resolve(flags, mapping: ModifierMapping()) }
 
