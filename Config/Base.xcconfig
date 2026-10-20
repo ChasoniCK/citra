@@ -1,0 +1,8 @@
+// Ad-hoc signing by default: anyone can build Citra, and a release never embeds a personal certificate.
+// To sign your own builds with Apple Development (a stable identity keeps notification permission
+// across rebuilds), create Config/Signing.local.xcconfig — it is git-ignored — with:
+//   CODE_SIGN_IDENTITY = Apple Development
+//   DEVELOPMENT_TEAM = <your team ID>
+CODE_SIGN_IDENTITY = -
+CODE_SIGN_STYLE = Manual
+#include? "Signing.local.xcconfig"

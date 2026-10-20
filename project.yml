@@ -4,15 +4,14 @@ options:
   deploymentTarget:
     macOS: "15.0"
   createIntermediateGroups: true
+# Signing lives in Config/Base.xcconfig (ad-hoc) with an optional, git-ignored local override.
+configFiles:
+  Debug: Config/Base.xcconfig
+  Release: Config/Base.xcconfig
 settings:
   base:
     SWIFT_VERSION: "6.0"
     MACOSX_DEPLOYMENT_TARGET: "15.0"
-    # Apple Development, not ad-hoc: a stable identity keeps privacy grants across rebuilds and lets
-    # notifications work. Release will switch to Developer ID for distribution.
-    CODE_SIGN_IDENTITY: "Apple Development"
-    DEVELOPMENT_TEAM: 4HHFU7AD84
-    CODE_SIGN_STYLE: Manual
 targets:
   Citra:
     type: application
@@ -22,7 +21,7 @@ targets:
       path: Citra/Info.plist
       properties:
         CFBundleDisplayName: Citra
-        CFBundleShortVersionString: "0.1.0"
+        CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
         LSUIElement: true
         LSMinimumSystemVersion: "15.0"

@@ -114,6 +114,7 @@
 		A25D18BAAC8DDA2E1020236F /* TaskManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerTests.swift; sourceTree = "<group>"; };
 		A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipTests.swift; sourceTree = "<group>"; };
 		B505454B8EA3488C8E116253 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
+		B5F92F940F58E71E031B017B /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacementTests.swift; sourceTree = "<group>"; };
 		BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingRenderTests.swift; sourceTree = "<group>"; };
 		BF5443F14F1C959719197C34 /* Shelf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shelf.swift; sourceTree = "<group>"; };
@@ -173,6 +174,14 @@
 			path = Actions;
 			sourceTree = "<group>";
 		};
+		58D2BCEC8FE80EB207267FA5 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				B5F92F940F58E71E031B017B /* Base.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		5FB93DAAB8C4DF1F9DDFC451 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -214,6 +223,7 @@
 			children = (
 				964ACF2503EAA8E309D3C7B1 /* Citra */,
 				E8F23A88D063A7DDE9CA5CEF /* CitraTests */,
+				58D2BCEC8FE80EB207267FA5 /* Config */,
 				BD6E359D603CB415C589305B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -352,11 +362,9 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					4A8C704344C46135263331FD = {
-						DevelopmentTeam = 4HHFU7AD84;
 						ProvisioningStyle = Manual;
 					};
 					B9B4BC1461EF4E639AD0C1FC = {
-						DevelopmentTeam = 4HHFU7AD84;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -497,6 +505,7 @@
 		};
 		B16D727E0A90BFF59CD89AAE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5F92F940F58E71E031B017B /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -528,11 +537,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 4HHFU7AD84;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -595,6 +601,7 @@
 		};
 		E1BBD4C4A967CDE44C355432 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5F92F940F58E71E031B017B /* Base.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -626,11 +633,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 4HHFU7AD84;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
