@@ -1,7 +1,7 @@
 import AppKit
 
 /// Which ring to show, chosen by the modifier held during the drag.
-enum MenuMode: String, Sendable {
+enum MenuMode: Sendable {
     case conversion, tools, fileActions
 
     /// Fixed priority when several are held: ⌘ > ⇧ > ⌃. Other modifiers are ignored.

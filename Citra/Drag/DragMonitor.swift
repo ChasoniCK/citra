@@ -3,50 +3,30 @@ import Carbon.HIToolbox
 
 /// Detects file drags started in any app and reports the modifier-selected mode while the
 /// button is held. Only a global mouse-down monitor plus polling of public state
-/// (`pressedMouseButtons`, `modifierFlags`, drag pasteboard `changeCount`): no
-/// Accessibility or Input Monitoring permission is involved.
+/// (`pressedMouseButtons`, `modifierFlags`, drag pasteboard `changeCount`, Escape key state):
+/// no Accessibility or Input Monitoring permission is involved (docs/feasibility.md).
 @MainActor
 final class DragMonitor {
     /// A file drag started; URLs read from the drag pasteboard before any drop.
     var onBegin: ([URL]) -> Void = { _ in }
-    /// The resolved mode changed during the drag (nil = no relevant modifier held).
+    /// The resolved mode changed during the drag (nil = no relevant modifier held, or Escape).
     var onModeChange: (MenuMode?) -> Void = { _ in }
-    /// The mouse button was released or the session was cancelled.
+    /// The mouse button was released.
     var onEnd: () -> Void = {}
 
     private let dragPasteboard = NSPasteboard(name: .drag)
     private var changeCountAtMouseDown = 0
-    private var monitors: [Any] = []
+    private var monitor: Any?
     private var timer: Timer?
     private var inSession = false
     private var suppressed = false
     private var mode: MenuMode?
-    private var sessionStart = Date.distantPast
-    private var lastDraggedEvent = Date.distantPast
-
-    // Diagnostics answering the feasibility questions.
-    private var draggedEventsDuringSession = 0
-    private var sawGlobalMouseUpDuringSession = false
-
-    #if DEBUG
-    /// `-CitraDebugMode tools` pins a mode so an automated drag without modifiers can reach the panel.
-    private let debugMode = UserDefaults.standard.string(forKey: "CitraDebugMode").flatMap(MenuMode.init(rawValue:))
-    #endif
 
     func start() {
-        addMonitor(.leftMouseDown) { $0.mouseDown() }
-        addMonitor(.leftMouseDragged) {
-            $0.lastDraggedEvent = .now
-            if $0.inSession { $0.draggedEventsDuringSession += 1 }
+        monitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
+            MainActor.assumeIsolated { self?.mouseDown() }
         }
-        addMonitor(.leftMouseUp) { if $0.inSession { $0.sawGlobalMouseUpDuringSession = true } }
-    }
-
-    private func addMonitor(_ mask: NSEvent.EventTypeMask, _ body: @escaping @MainActor (DragMonitor) -> Void) {
-        let monitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] _ in
-            MainActor.assumeIsolated { if let self { body(self) } }
-        }
-        if let monitor { monitors.append(monitor) } else { PocLog.write("global monitor \(mask) unavailable") }
+        if monitor == nil { PocLog.write("global mouse-down monitor unavailable") }
     }
 
     private func mouseDown() {
@@ -68,31 +48,20 @@ final class DragMonitor {
             changeCountAtMouseDown = count // one look per drag
             let urls = dragPasteboard.readObjects(forClasses: [NSURL.self],
                                                   options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
-            guard !urls.isEmpty else {
-                PocLog.write("drag without file URLs, types=\(dragPasteboard.types?.map(\.rawValue) ?? [])")
-                return
-            }
+            guard !urls.isEmpty else { return }
             inSession = true
-            sessionStart = .now
-            draggedEventsDuringSession = 0
-            sawGlobalMouseUpDuringSession = false
-            PocLog.write("session begin: \(urls.count) item(s) \(urls.map(\.lastPathComponent)) flags=\(Self.describe(NSEvent.modifierFlags))")
+            PocLog.write("session begin: \(urls.count) item(s)")
             onBegin(urls)
         }
 
         // Escape cancels the drag in the source app; hide the ring until the button is released.
-        // Readable without Input Monitoring (poc.log run 1).
         if !suppressed, CGEventSource.keyState(.combinedSessionState, key: CGKeyCode(kVK_Escape)) {
             suppressed = true
-            PocLog.write("Escape during drag → ring suppressed until mouse up")
+            PocLog.write("Escape: ring suppressed until mouse up")
         }
 
-        var newMode = suppressed ? nil : MenuMode.resolve(NSEvent.modifierFlags)
-        #if DEBUG
-        if !suppressed { newMode = debugMode ?? newMode }
-        #endif
+        let newMode = suppressed ? nil : MenuMode.resolve(NSEvent.modifierFlags)
         if newMode != mode {
-            PocLog.write("mode \(mode.map { "\($0)" } ?? "none") → \(newMode.map { "\($0)" } ?? "none") at +\(ms(since: sessionStart))ms flags=\(Self.describe(NSEvent.modifierFlags)), last mouse drag event \(ms(since: lastDraggedEvent))ms ago")
             mode = newMode
             onModeChange(newMode)
         }
@@ -102,18 +71,10 @@ final class DragMonitor {
         timer?.invalidate()
         timer = nil
         guard inSession else { return }
-        PocLog.write("session end after \(ms(since: sessionStart))ms: global leftMouseDragged seen=\(draggedEventsDuringSession), global leftMouseUp seen=\(sawGlobalMouseUpDuringSession)")
+        PocLog.write("session end")
         inSession = false
         suppressed = false
         mode = nil
         onEnd()
     }
-
-    static func describe(_ flags: NSEvent.ModifierFlags) -> String {
-        let names: [(NSEvent.ModifierFlags, String)] = [(.command, "⌘"), (.shift, "⇧"), (.control, "⌃"), (.option, "⌥")]
-        let s = names.filter { flags.contains($0.0) }.map(\.1).joined()
-        return s.isEmpty ? "-" : s
-    }
 }
-
-func ms(since date: Date) -> Int { Int(Date.now.timeIntervalSince(date) * 1000) }

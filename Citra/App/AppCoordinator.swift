@@ -15,10 +15,7 @@ final class AppCoordinator {
             + "accessibility trusted=\(AXIsProcessTrusted()), input monitoring granted=\(CGPreflightListenEventAccess()), "
             + "screens=\(NSScreen.screens.map { "\($0.localizedName) \($0.frame) @\($0.backingScaleFactor)x" })")
 
-        monitor.onBegin = { [unowned self] in
-            urls = $0
-            panel.prepare()
-        }
+        monitor.onBegin = { [unowned self] in urls = $0 }
         monitor.onModeChange = { [unowned self] mode in
             guard let mode else { return panel.hide() }
             let items = Self.items(for: mode, urls: urls)
