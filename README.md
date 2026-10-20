@@ -14,16 +14,23 @@
 
 | Тип | ⌘ Conversion | ⇧ Tools |
 |---|---|---|
-| Изображения (всё, что читает ImageIO: PNG, JPEG, HEIC, TIFF, GIF, BMP, WebP…) | JPEG, PNG, HEIC, TIFF (кроме собственного формата), PDF | Resize (пресеты), Rotate 90°, Compress (только JPEG/HEIC), Metadata (удалить EXIF/GPS/IPTC/XMP) |
+| Изображения (всё, что читает ImageIO: PNG, JPEG, HEIC, TIFF, GIF, BMP, WebP…) | JPEG, PNG, HEIC, TIFF (кроме собственного формата), PDF | Resize (пресеты), Rotate 90°, Compress (только JPEG/HEIC), Metadata (убрать EXIF/GPS/IPTC/XMP) |
 | ZIP | TAR, TAR.GZ | Extract, Test |
-| Видео, которое открывает AVFoundation (MP4, MOV, M4V) | MOV (passthrough), M4A | Snapshot (средний кадр → PNG), Mute |
-| Любые файлы и папки | — | — |
-
-M4A и Mute для видео без звука сообщают, что аудиодорожки нет, и ничего не создают: до drop Citra не читает файлы, чтобы macOS не запрашивала доступ к папкам.
+| Видео, которое открывает AVFoundation (MP4, MOV, M4V) | MOV ⇄ MP4 (без перекодирования), M4A, GIF; с ffmpeg — MKV, WebM, AVI, WMV, MP3 | Compress (720p), Mute, Trim, Crop, Speed, Snapshot |
+| Видео, которое AVFoundation не открывает (MKV, WebM, AVI, WMV…) — только с ffmpeg | MP4, MKV, WebM, AVI, WMV, MP3 (кроме собственного формата) | — |
+| Аудио — только с ffmpeg | MP3 | — |
+| PDF | — | Merge (2 и больше), Split (по странице в файл) |
 
 ⌃ File Actions для любых файлов и папок: AirDrop, Float (плавающая полка), Copy (⌘V в Finder вставляет сами файлы), Move (с вопросом при конфликте имён), Copy Path, Terminal.
 
-Результат — рядом с оригиналом: `video.mp4` → `video.mov`, инструменты — `photo rotated.png`; занятое имя → `video 2.mov`. Оригинал не изменяется (кроме Move). Запись идёт во временный файл и переименовывается по готовности: отмена или ошибка не оставляют битых файлов. Ход задач и отмена — в меню строки меню.
+**От чего зависит доступность:**
+- **HEIC** — от кодировщика ImageIO (на Apple Silicon есть).
+- **TAR** — от `/usr/bin/tar`.
+- **Форматы через ffmpeg** — от `ffmpeg` в `/opt/homebrew/bin` или `/usr/local/bin` и нужных кодировщиков в нём. ffmpeg не встраивается в приложение; статус и подсказка — в Settings → Conversions.
+- **Terminal / iTerm2** — от того, что выбрано в настройках и установлено на Mac.
+- **M4A и Mute для видео без звука, Split для одностраничного PDF** — до drop Citra файлы не читает, чтобы macOS не запрашивала доступ к папкам. Поэтому эти действия показываются всегда, а при drop сообщают, почему не сработали, и ничего не создают.
+
+Результат — рядом с оригиналом или в выбранной папке: `video.mp4` → `video.mov`, инструменты — `photo rotated.png`, занятое имя → `video 2.mov`. Оригинал не изменяется (кроме Move). Запись идёт во временный файл и переименовывается по готовности: отмена или ошибка не оставляют битых файлов. Ход задач и отмена — в меню строки меню.
 
 ## Настройки
 
