@@ -17,6 +17,7 @@
 		641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */; };
 		717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90006D9E13444C860F65C897 /* DragMonitor.swift */; };
 		73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */; };
+		8600CB55399A14322A953C2B /* RingBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3674297301CC69AB1EB2C938 /* RingBackdrop.swift */; };
 		8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B505454B8EA3488C8E116253 /* FileNamingTests.swift */; };
 		979753AC436CCD97BC67F9B8 /* PanelPlacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68D90EF3835C5598043FE6D /* PanelPlacement.swift */; };
 		A3EEF9578F5FD42AD78E4DED /* RadialLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */; };
@@ -27,6 +28,7 @@
 		D29982F7E0E79A7D0F092DCC /* PocLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F67CF9A0485DFDDA295E8D /* PocLog.swift */; };
 		D9EB154BC091D67A8A0BFFC0 /* ImageConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B94A316CD15379F967CBFF /* ImageConversionTests.swift */; };
 		E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */; };
+		E3B8D432D44650CA9E379989 /* RingRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */; };
 		F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */; };
 		FD823559CE7D94087FD36C29 /* RadialMenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB88BC382160C69197801B0 /* RadialMenuModel.swift */; };
 /* End PBXBuildFile section */
@@ -47,6 +49,7 @@
 		20B94A316CD15379F967CBFF /* ImageConversionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConversionTests.swift; sourceTree = "<group>"; };
 		3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayout.swift; sourceTree = "<group>"; };
 		33F67CF9A0485DFDDA295E8D /* PocLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocLog.swift; sourceTree = "<group>"; };
+		3674297301CC69AB1EB2C938 /* RingBackdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBackdrop.swift; sourceTree = "<group>"; };
 		4114BF72D4578A43449A429F /* MenuModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModeTests.swift; sourceTree = "<group>"; };
 		57275E0E1AF873E59B60F70C /* CitraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CitraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		58031D99C1876AAC44B84FEB /* OverflowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverflowLayout.swift; sourceTree = "<group>"; };
@@ -61,6 +64,7 @@
 		9FB88BC382160C69197801B0 /* RadialMenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuModel.swift; sourceTree = "<group>"; };
 		B505454B8EA3488C8E116253 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
 		B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacementTests.swift; sourceTree = "<group>"; };
+		BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingRenderTests.swift; sourceTree = "<group>"; };
 		D68D90EF3835C5598043FE6D /* PanelPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacement.swift; sourceTree = "<group>"; };
 		DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperation.swift; sourceTree = "<group>"; };
 		DDB961AEEAE8A283AD134876 /* RadialMenuModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuModelTests.swift; sourceTree = "<group>"; };
@@ -146,6 +150,7 @@
 				9FB88BC382160C69197801B0 /* RadialMenuModel.swift */,
 				E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */,
 				9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */,
+				3674297301CC69AB1EB2C938 /* RingBackdrop.swift */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -161,6 +166,7 @@
 				9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */,
 				DDB961AEEAE8A283AD134876 /* RadialMenuModelTests.swift */,
 				F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */,
+				BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */,
 			);
 			path = CitraTests;
 			sourceTree = "<group>";
@@ -253,6 +259,7 @@
 				A3EEF9578F5FD42AD78E4DED /* RadialLayoutTests.swift in Sources */,
 				04869F9D13C31BB652E6C855 /* RadialMenuModelTests.swift in Sources */,
 				E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */,
+				E3B8D432D44650CA9E379989 /* RingRenderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +281,7 @@
 				FD823559CE7D94087FD36C29 /* RadialMenuModel.swift in Sources */,
 				B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */,
 				641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */,
+				8600CB55399A14322A953C2B /* RingBackdrop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

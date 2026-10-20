@@ -153,8 +153,10 @@ struct RadialLayoutTests {
         }
     }
 
-    @Test func labelWidthIsTheChordAtMidRadiusMinusPadding() {
-        #expect(abs(rounded(6).labelWidth - (2 * 91.5 * sin(Double.pi / 6) - 5 - 16)) < 1e-9)
-        #expect(abs(rounded(1).labelWidth - (2 * 91.5 - 5 - 16)) < 1e-9)
+    /// Wide enough for "COMPRESS" / "SNAPSHOT" on a 9-sector ring, as in references/video-tools.png.
+    @Test func labelWidthIsTheChordAtMidRadiusMinusSeamAndPadding() {
+        #expect(abs(rounded(6).labelWidth - (2 * 91.5 * sin(Double.pi / 6) - 5 - 6)) < 1e-9)
+        #expect(abs(rounded(1).labelWidth - (2 * 91.5 - 5 - 6)) < 1e-9)
+        #expect(rounded(9).labelWidth > 50)
     }
 }

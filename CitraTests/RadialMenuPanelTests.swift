@@ -129,4 +129,19 @@ struct RadialMenuPanelTests {
         #expect(dropped == ["10"])
         panel.endSession()
     }
+
+    /// A new drag can start while the previous ring is still fading out; it must not take that drop.
+    @Test func newSessionRefusesDropsOnAFadingRing() {
+        let panel = RadialMenuPanelController()
+        var dropped: [String] = []
+        panel.onDrop = { item, _ in dropped.append(item.id) }
+        panel.show(items, idleCenterText: "")
+        panel.endSession()
+        panel.sessionBegan()
+        let drag = FakeDrag(at: overSector0, file: file)
+        #expect(panel.dragMoved(drag) == [])
+        #expect(!panel.performDrop(drag))
+        #expect(!panel.panel.isVisible)
+        #expect(dropped.isEmpty)
+    }
 }

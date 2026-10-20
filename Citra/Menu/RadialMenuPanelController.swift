@@ -14,13 +14,20 @@ final class RadialMenuPanelController {
     let panel: NSPanel = RingPanel()
 
     private let dropView = DropTargetView()
+    private let backdrop = RingBackdrop()
     private(set) var isShown = false
     private var acceptsDrops = false
+    /// Bumped whenever a pending fade-out must not order the panel out any more.
+    private var dismissToken = 0
 
     init() {
         let side = RingPanel.initialSide
         let container = NSView(frame: CGRect(x: 0, y: 0, width: side, height: side))
+        backdrop.setFrameOrigin(CGPoint(x: (side - backdrop.frame.width) / 2, y: (side - backdrop.frame.height) / 2))
+        backdrop.autoresizingMask = [.minXMargin, .maxXMargin, .minYMargin, .maxYMargin] // stays centered on resize
+        container.addSubview(backdrop)
         let hosting = NSHostingView(rootView: RadialMenuView(model: model))
+        hosting.sizingOptions = [] // the controller sizes the panel (with or without the overflow arc)
         for view in [hosting, dropView] as [NSView] {
             view.frame = container.bounds
             view.autoresizingMask = [.width, .height]
@@ -30,48 +37,89 @@ final class RadialMenuPanelController {
         dropView.owner = self
     }
 
-    /// Shows the ring at the cursor, or swaps its content in place if already shown.
+    /// A new drag started: a previous ring still fading out must neither linger nor take this drag's drop.
+    func sessionBegan() {
+        acceptsDrops = false
+        if !isShown { finishHiding() }
+    }
+
+    /// Shows the ring at the cursor, or switches its content in place (cross-fade) if already shown.
     func show(_ items: [RadialMenuItem], idleCenterText: String) {
-        model.items = items
-        model.hovered = nil
-        model.idleCenterText = idleCenterText
         acceptsDrops = true
-        let size = CGSize(width: model.panelSide, height: model.panelSide)
+        model.idleCenterText = idleCenterText
+        model.confirmed = nil
         if isShown {
-            // Same window; only grows or shrinks around its center when the overflow arc comes or goes.
-            if panel.frame.size != size {
-                place(centeredAt: CGPoint(x: panel.frame.midX, y: panel.frame.midY), size: size)
+            if model.items != items {
+                withAnimation(.snappy(duration: 0.2)) {
+                    model.items = items
+                    model.hovered = nil
+                    model.generation += 1
+                }
             }
+            // Same window; it only grows or shrinks around its center when the overflow arc comes or goes.
+            let size = CGSize(width: model.panelSide, height: model.panelSide)
+            if panel.frame.size != size { place(centeredAt: CGPoint(x: panel.frame.midX, y: panel.frame.midY), size: size) }
             return
         }
+
         isShown = true
-        place(centeredAt: NSEvent.mouseLocation, size: size)
+        dismissToken += 1
+        model.items = items
+        model.hovered = nil
+        model.phase = .hidden
+        backdrop.alphaValue = 0
+        place(centeredAt: NSEvent.mouseLocation, size: CGSize(width: model.panelSide, height: model.panelSide))
         panel.orderFrontRegardless()
+        // Next run-loop pass, so the first frame on screen is the start state and the appear animates.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, isShown else { return }
+            withAnimation(.spring(duration: 0.22, bounce: 0.18)) { model.phase = .shown }
+            fadeBackdrop(to: 1, duration: 0.16)
+        }
+    }
+
+    /// The modifier was released or the drag was cancelled: gone at once, and any drop still routed here is refused.
+    func hide() {
+        acceptsDrops = false
+        guard isShown else { return }
+        isShown = false
+        finishHiding()
+    }
+
+    /// The mouse button went up. A drop on the ring may still be in flight (it often arrives a few ms after
+    /// the release is polled), so keep accepting it while the ring fades out, then take the panel off screen.
+    func endSession() {
+        guard isShown else { return }
+        isShown = false
+        dismissToken += 1
+        let token = dismissToken
+        withAnimation(.easeIn(duration: 0.18)) { model.phase = .dismissed }
+        fadeBackdrop(to: 0, duration: 0.18)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self, dismissToken == token else { return }
+            finishHiding()
+        }
+    }
+
+    private func finishHiding() {
+        dismissToken += 1
+        panel.orderOut(nil)
+        model.hovered = nil
+        model.confirmed = nil
+        model.phase = .hidden
+    }
+
+    private func fadeBackdrop(to alpha: CGFloat, duration: TimeInterval) {
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = duration
+            backdrop.animator().alphaValue = alpha
+        }
     }
 
     private func place(centeredAt point: CGPoint, size: CGSize) {
         let screen = NSScreen.screens.first { NSMouseInRect(point, $0.frame, false) } ?? NSScreen.main
         let visible = screen?.visibleFrame ?? panel.frame
         panel.setFrame(PanelPlacement.frame(centeredAt: point, size: size, in: visible), display: true)
-    }
-
-    /// The modifier was released or the drag was cancelled: hide and refuse any drop still routed here.
-    func hide() {
-        acceptsDrops = false
-        conceal()
-    }
-
-    /// The mouse button went up. A drop on the ring may still be in flight (it often arrives a few ms
-    /// after the release is polled), so keep accepting it and only take the panel off screen.
-    func endSession() {
-        conceal()
-    }
-
-    private func conceal() {
-        guard isShown else { return }
-        isShown = false
-        model.hovered = nil
-        panel.orderOut(nil)
     }
 
     // MARK: Drag destination callbacks
@@ -84,7 +132,7 @@ final class RadialMenuPanelController {
     }
 
     func dragExited() {
-        model.hovered = nil
+        if isShown { model.hovered = nil }
     }
 
     func performDrop(_ info: NSDraggingInfo) -> Bool {
@@ -92,6 +140,7 @@ final class RadialMenuPanelController {
         let urls = info.draggingPasteboard.readObjects(forClasses: [NSURL.self],
                                                        options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
         PocLog.write("drop on \(item.title): \(urls.count) item(s)")
+        model.confirmed = target
         onDrop(item, urls)
         return true
     }

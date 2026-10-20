@@ -15,7 +15,10 @@ final class AppCoordinator {
             + "accessibility trusted=\(AXIsProcessTrusted()), input monitoring granted=\(CGPreflightListenEventAccess()), "
             + "screens=\(NSScreen.screens.map { "\($0.localizedName) \($0.frame) @\($0.backingScaleFactor)x" })")
 
-        monitor.onBegin = { [unowned self] in urls = $0 }
+        monitor.onBegin = { [unowned self] in
+            urls = $0
+            panel.sessionBegan()
+        }
         monitor.onModeChange = { [unowned self] mode in
             guard let mode else { return panel.hide() }
             let items = Self.items(for: mode, urls: urls)
@@ -38,8 +41,10 @@ final class AppCoordinator {
         case .conversion:
             let allPNG = urls.allSatisfy { (try? $0.resourceValues(forKeys: [.contentTypeKey]))?.contentType?.conforms(to: .png) == true }
             guard allPNG else { return [] }
-            return [RadialMenuItem(id: "jpeg", title: "JPEG")]
-                + ["HEIC", "TIFF", "PDF"].map { RadialMenuItem(id: $0, title: $0, isPlaceholder: true) }
+            // 12 entries so the More arc can be tried; only JPEG is real until the Stage 3 registries.
+            return [RadialMenuItem(id: "jpeg", title: "JPEG", detail: "PNG → JPEG")]
+                + ["HEIC", "TIFF", "PDF", "WEBP", "GIF", "BMP", "ICO", "JP2", "TGA", "EXR", "PSD"]
+                    .map { RadialMenuItem(id: $0, title: $0, detail: "PNG → \($0)", isPlaceholder: true) }
         case .tools:
             return [("Redact", "eye.slash"), ("Compress", "arrow.down.right.and.arrow.up.left"), ("Metadata", "tag"),
                     ("Mute", "speaker.slash"), ("Trim", "scissors"), ("Crop", "crop"), ("Speed", "gauge.with.dots.needle.67percent"),
@@ -55,10 +60,12 @@ final class AppCoordinator {
         }
     }
 
+    /// Idle center text: the file size, "Folder", or the item count.
     static func summary(of urls: [URL]) -> String {
         guard urls.count == 1, let url = urls.first else { return "\(urls.count) items" }
-        let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize
-        return size.map { ByteCountFormatter.string(fromByteCount: Int64($0), countStyle: .file) } ?? url.lastPathComponent
+        let values = try? url.resourceValues(forKeys: [.fileSizeKey, .isDirectoryKey])
+        if values?.isDirectory == true { return "Folder" }
+        return values?.fileSize.map { ByteCountFormatter.string(fromByteCount: Int64($0), countStyle: .file) } ?? url.lastPathComponent
     }
 
     static func perform(_ item: RadialMenuItem, _ urls: [URL]) {

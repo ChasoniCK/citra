@@ -34,9 +34,9 @@ struct RadialLayout: Sendable, Equatable {
         return CGPoint(x: r * sin(a), y: r * cos(a))
     }
 
-    /// Room for a label: the chord at mid radius, minus the seam and 8 pt padding per side.
+    /// Room for a label: the chord at mid radius, minus the seam and 3 pt padding per side.
     var labelWidth: CGFloat {
-        2 * midRadius * sin(min(.pi / Double(max(count, 1)), .pi / 2)) - gap - 16
+        2 * midRadius * sin(min(.pi / Double(max(count, 1)), .pi / 2)) - gap - 6
     }
 
     func sectorPath(_ index: Int) -> CGPath {

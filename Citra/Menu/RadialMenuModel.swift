@@ -17,6 +17,21 @@ enum RingTarget: Equatable, Sendable {
     case overflow(Int)
 }
 
+/// Appear: hidden → shown (scale up + fade in). Completion: shown → dismissed (slight scale up + fade out).
+enum RingPhase: Sendable {
+    case hidden, shown, dismissed
+
+    var scale: CGFloat {
+        switch self {
+        case .hidden: 0.86
+        case .shown: 1
+        case .dismissed: 1.04
+        }
+    }
+
+    var opacity: Double { self == .shown ? 1 : 0 }
+}
+
 /// Ring dimensions in points, measured from the reference screenshots (docs/superpowers/plans/2026-10-20-stage2-radial-ui.md).
 enum RingMetrics {
     static let hole: CGFloat = 46
@@ -42,6 +57,11 @@ final class RadialMenuModel {
     var items: [RadialMenuItem] = []
     var hovered: RingTarget?
     var idleCenterText = ""
+    var phase = RingPhase.hidden
+    /// Bumped on a mode switch so the sector group cross-fades instead of morphing.
+    var generation = 0
+    /// The sector a file was dropped on; stays lit while the ring fades out.
+    var confirmed: RingTarget?
 
     /// Up to 10 sectors; beyond that the first 9 plus More.
     var primaryItems: [RadialMenuItem] {
