@@ -1,6 +1,7 @@
 import CoreGraphics
 import Foundation
 import Observation
+import SwiftUI
 
 struct RadialMenuItem: Identifiable, Equatable {
     let id: String
@@ -30,21 +31,55 @@ enum RingPhase: Sendable {
     var opacity: Double { self == .shown ? 1 : 0 }
 }
 
-/// Ring dimensions in points, measured from the reference screenshots (docs/superpowers/plans/2026-10-20-stage2-radial-ui.md).
+/// Ring dimensions in points, measured from the reference screenshots (docs/superpowers/plans/2026-10-20-stage2-radial-ui.md),
+/// times the Appearance size. Size, motion and accent are captured when the ring is shown, not mid-drag.
+@MainActor
 enum RingMetrics {
-    static let hole: CGFloat = 46
-    static let inner: CGFloat = 53.5
-    static let outer: CGFloat = 129.5
-    static let disc: CGFloat = 136
-    static let gap: CGFloat = 5
-    static let outerCorner: CGFloat = 14
-    static let innerCorner: CGFloat = 8
-    static let overflowInner: CGFloat = 142
-    static let overflowOuter: CGFloat = 200
+    static var scale: CGFloat = 1
+    static var motion = Motion.normal
+    static var accent = Accent.orange
+
+    static var hole: CGFloat { 46 * scale }
+    static var inner: CGFloat { 53.5 * scale }
+    static var outer: CGFloat { 129.5 * scale }
+    static var disc: CGFloat { 136 * scale }
+    static var gap: CGFloat { 5 * scale }
+    static var outerCorner: CGFloat { 14 * scale }
+    static var innerCorner: CGFloat { 8 * scale }
+    static var overflowInner: CGFloat { 142 * scale }
+    static var overflowOuter: CGFloat { 200 * scale }
     static let overflowItemAngle = 28 * Double.pi / 180
     /// Room around the disc for the hover push-out and the shadow.
-    static let margin: CGFloat = 20
+    static var margin: CGFloat { 20 * scale }
     static let maxPrimary = 10
+
+    static func capture() {
+        scale = AppSettings.ringSize.scale
+        motion = AppSettings.motion
+        accent = AppSettings.accent
+    }
+}
+
+/// Animations scaled by Appearance › Animation; nil (instant) when animations are off.
+@MainActor
+enum RingMotion {
+    private static let fastSpeed = 1.7
+
+    static func scaled(_ animation: Animation) -> Animation? {
+        switch RingMetrics.motion {
+        case .off: nil
+        case .fast: animation.speed(fastSpeed)
+        case .normal: animation
+        }
+    }
+
+    static func duration(_ seconds: Double) -> Double {
+        switch RingMetrics.motion {
+        case .off: 0
+        case .fast: seconds / fastSpeed
+        case .normal: seconds
+        }
+    }
 }
 
 @MainActor @Observable
@@ -80,7 +115,7 @@ final class RadialMenuModel {
         return OverflowLayout(anchorAngle: layout.centerAngle(of: primaryItems.count - 1), count: overflowItems.count,
                               innerRadius: RingMetrics.overflowInner, outerRadius: RingMetrics.overflowOuter,
                               itemAngle: RingMetrics.overflowItemAngle, gap: RingMetrics.gap,
-                              outerCornerRadius: 12, innerCornerRadius: RingMetrics.innerCorner)
+                              outerCornerRadius: 12 * RingMetrics.scale, innerCornerRadius: RingMetrics.innerCorner)
     }
 
     var panelSide: CGFloat {

@@ -49,7 +49,7 @@ enum ImageTools {
             props[kCGImagePropertyExifDictionary] = exif
         }
         props[kCGImageDestinationLossyCompressionQuality] = quality
-        return try await OutputWriter.write(into: url.deletingLastPathComponent(),
+        return try await OutputWriter.write(into: OutputWriter.destination(for: url),
                                             baseName: "\(url.deletingPathExtension().lastPathComponent) \(suffix)",
                                             pathExtension: url.pathExtension) { temp in
             guard let dest = CGImageDestinationCreateWithURL(temp as CFURL, type, 1, nil) else {
@@ -181,7 +181,7 @@ struct RemoveImageMetadata: FileAction {
             let type = CGImageSourceGetType(src) ?? item.type.identifier as CFString
             let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil) as? [CFString: Any] ?? [:]
             let orientation = props[kCGImagePropertyOrientation] as? Int ?? 1
-            return try await OutputWriter.write(into: item.url.deletingLastPathComponent(),
+            return try await OutputWriter.write(into: OutputWriter.destination(for: item.url),
                                                 baseName: "\(item.url.deletingPathExtension().lastPathComponent) no metadata",
                                                 pathExtension: item.url.pathExtension) { temp in
                 let options: [CFString: Any] = [

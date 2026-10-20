@@ -13,6 +13,14 @@ final class RingBackdrop: NSVisualEffectView {
         updateMaterial()
     }
 
+    /// Matches the current ring size, centered in the container.
+    func fit() {
+        let side = RingMetrics.disc * 2
+        guard frame.width != side, let container = superview else { return }
+        frame = CGRect(x: (container.bounds.width - side) / 2, y: (container.bounds.height - side) / 2, width: side, height: side)
+        maskImage = Self.annulus(outer: RingMetrics.disc, inner: RingMetrics.hole)
+    }
+
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("not used from nibs") }
 

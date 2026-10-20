@@ -50,3 +50,9 @@ schemes:
         CitraTests: [test]
     test:
       targets: [CitraTests]
+      # Pin settings the suite depends on, so a user's preferences never redirect test output.
+      commandLineArguments:
+        "-outputLocation original": true
+        "-videoQuality passthrough": true
+        "-ringSize normal": true
+        "-motion normal": true

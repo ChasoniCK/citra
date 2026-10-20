@@ -182,9 +182,19 @@ struct OpenInTerminal: FileAction {
     let id = "file.terminal"
     let title = "Terminal"
     let symbol: String? = "terminal"
-    static let bundleID = "com.apple.Terminal"
+    static let terminalID = "com.apple.Terminal"
+    static let itermID = "com.googlecode.iterm2"
 
-    var isAvailable: Bool { NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.bundleID) != nil }
+    static var isITermInstalled: Bool { NSWorkspace.shared.urlForApplication(withBundleIdentifier: itermID) != nil }
+
+    /// The terminal chosen in Settings; Terminal when iTerm2 is chosen but not installed.
+    static var application: URL? {
+        let workspace = NSWorkspace.shared
+        if AppSettings.terminal == .iterm, let iterm = workspace.urlForApplication(withBundleIdentifier: itermID) { return iterm }
+        return workspace.urlForApplication(withBundleIdentifier: terminalID)
+    }
+
+    var isAvailable: Bool { Self.application != nil }
     func isApplicable(to items: [FileItem]) -> Bool { true }
     func centerText(for items: [FileItem]) -> String? { "Open Terminal here" }
 
@@ -196,7 +206,7 @@ struct OpenInTerminal: FileAction {
     }
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
-        guard let app = NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.bundleID) else {
+        guard let app = Self.application else {
             throw CocoaError(.fileNoSuchFile, userInfo: [NSLocalizedDescriptionKey: "Terminal is not installed."])
         }
         _ = try await NSWorkspace.shared.open(Self.directories(for: items), withApplicationAt: app,

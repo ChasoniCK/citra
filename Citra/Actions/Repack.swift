@@ -79,7 +79,7 @@ struct RepackArchive: FileAction {
         progress.totalUnitCount = Int64(items.count) * 2
         for item in items {
             try Task.checkCancellation()
-            let directory = item.url.deletingLastPathComponent()
+            let directory = OutputWriter.destination(for: item.url) // staging lives where the result goes
             guard fm.isWritableFile(atPath: directory.path) else { throw OutputWriter.Failure.notWritable(directory) }
             let zip = try ZipReader(url: item.url)
             let staging = directory.appending(path: ".citra-staging-\(UUID().uuidString)", directoryHint: .isDirectory)

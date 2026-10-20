@@ -15,11 +15,16 @@ struct RingPalette: Equatable {
     var pillBottom: Color
     var pillEdge: Color
     var pillText: Color
+    var accentTop = Accent.orange.gradient.top
+    var accentBottom = Accent.orange.gradient.bottom
 
-    static let accentTop = Color(red: 0xFA / 255, green: 0x73 / 255, blue: 0x49 / 255)
-    static let accentBottom = Color(red: 0xD4 / 255, green: 0x4F / 255, blue: 0x02 / 255)
+    static func of(_ scheme: ColorScheme, accent: Accent) -> RingPalette {
+        var palette = base(scheme)
+        (palette.accentTop, palette.accentBottom) = accent.gradient
+        return palette
+    }
 
-    static func of(_ scheme: ColorScheme) -> RingPalette {
+    private static func base(_ scheme: ColorScheme) -> RingPalette {
         scheme == .dark
             ? RingPalette(disc: Color(white: 0.09, opacity: 0.62), discEdge: .white.opacity(0.14), hole: .black.opacity(0.14),
                           sectorTop: .white.opacity(0.13), sectorBottom: .white.opacity(0.075),
@@ -43,7 +48,7 @@ struct RadialMenuView: View {
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        let palette = RingPalette.of(scheme)
+        let palette = RingPalette.of(scheme, accent: RingMetrics.accent)
         let layout = model.layout
         ZStack {
             Disc(palette: palette)
@@ -70,7 +75,7 @@ struct RadialMenuView: View {
         .frame(width: model.panelSide, height: model.panelSide)
         .scaleEffect(model.phase.scale)
         .opacity(model.phase.opacity)
-        .animation(.spring(duration: 0.2, bounce: 0.15), value: model.isOverflowOpen)
+        .animation(RingMotion.scaled(.spring(duration: 0.2, bounce: 0.15)), value: model.isOverflowOpen)
     }
 }
 
@@ -114,13 +119,13 @@ struct SectorView: View, Equatable {
 
     var body: some View {
         let lit = isHovered || isConfirmed
-        let push: CGFloat = isHovered ? 4 : 0
+        let push: CGFloat = isHovered ? 4 * RingMetrics.scale : 0
         ZStack {
             shape
                 .fill(LinearGradient(colors: [palette.sectorTop, palette.sectorBottom], startPoint: .top, endPoint: .bottom)
                     .shadow(.inner(color: palette.innerShadow, radius: 2, y: 1)))
             shape
-                .fill(LinearGradient(colors: [RingPalette.accentTop, RingPalette.accentBottom], startPoint: .top, endPoint: .bottom))
+                .fill(LinearGradient(colors: [palette.accentTop, palette.accentBottom], startPoint: .top, endPoint: .bottom))
                 .opacity(lit ? 1 : 0)
             shape
                 .stroke(LinearGradient(colors: [palette.sectorEdgeTop, palette.sectorEdgeBottom], startPoint: .top, endPoint: .bottom),
@@ -131,7 +136,7 @@ struct SectorView: View, Equatable {
         }
         .brightness(isConfirmed ? 0.12 : 0)
         .offset(x: push * sin(direction), y: -push * cos(direction))
-        .animation(.spring(duration: 0.18, bounce: 0.2), value: isHovered)
+        .animation(RingMotion.scaled(.spring(duration: 0.18, bounce: 0.2)), value: isHovered)
     }
 }
 
@@ -142,12 +147,12 @@ private struct SectorLabel: View {
     let color: Color
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 4 * RingMetrics.scale) {
             if let symbol = item.symbol {
-                Image(systemName: symbol).font(.system(size: 17, weight: .medium))
+                Image(systemName: symbol).font(.system(size: 17 * RingMetrics.scale, weight: .medium))
             }
             Text(item.title.uppercased())
-                .font(.system(size: item.symbol == nil ? 15 : 10, weight: .bold))
+                .font(.system(size: (item.symbol == nil ? 15 : 10) * RingMetrics.scale, weight: .bold))
                 .tracking(item.symbol == nil ? 0.3 : 0.5)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
@@ -190,12 +195,13 @@ private struct CenterPill: View {
 
     var body: some View {
         Text(text)
-            .font(.system(size: 13, weight: .semibold))
+            .font(.system(size: 13 * RingMetrics.scale, weight: .semibold))
             .foregroundStyle(palette.pillText)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
-            .padding(.horizontal, 14)
-            .frame(minWidth: 84, maxWidth: 100, minHeight: 39, maxHeight: 39)
+            .padding(.horizontal, 14 * RingMetrics.scale)
+            .frame(minWidth: 84 * RingMetrics.scale, maxWidth: 100 * RingMetrics.scale,
+                   minHeight: 39 * RingMetrics.scale, maxHeight: 39 * RingMetrics.scale)
             .background {
                 Capsule()
                     .fill(LinearGradient(colors: [palette.pillTop, palette.pillBottom], startPoint: .top, endPoint: .bottom)
@@ -204,7 +210,7 @@ private struct CenterPill: View {
             }
             .fixedSize()
             .contentTransition(.opacity)
-            .animation(.easeOut(duration: 0.12), value: text)
+            .animation(RingMotion.scaled(.easeOut(duration: 0.12)), value: text)
     }
 }
 
@@ -229,5 +235,22 @@ private struct Annulus: Shape {
         p.addEllipse(in: CGRect(x: c.x - outer, y: c.y - outer, width: outer * 2, height: outer * 2))
         p.addEllipse(in: CGRect(x: c.x - inner, y: c.y - inner, width: inner * 2, height: inner * 2))
         return p
+    }
+}
+
+extension Accent {
+    /// Top → bottom of the hovered sector; orange is the references' `#FA7349` → `#D44F02`.
+    var gradient: (top: Color, bottom: Color) {
+        func rgb(_ hex: UInt32) -> Color {
+            Color(red: Double(hex >> 16 & 0xFF) / 255, green: Double(hex >> 8 & 0xFF) / 255, blue: Double(hex & 0xFF) / 255)
+        }
+        return switch self {
+        case .orange: (rgb(0xFA7349), rgb(0xD44F02))
+        case .blue: (rgb(0x4D9BFF), rgb(0x1A64DB))
+        case .purple: (rgb(0xB17DFF), rgb(0x7744DB))
+        case .pink: (rgb(0xFF6EA8), rgb(0xD9306D))
+        case .green: (rgb(0x52D67F), rgb(0x1F9E4C))
+        case .graphite: (rgb(0x9A9AA0), rgb(0x5C5C62))
+        }
     }
 }

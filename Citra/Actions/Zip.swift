@@ -328,7 +328,7 @@ struct ExtractArchive: FileAction {
             let zip = try ZipReader(url: item.url)
             let root = ZipExtractor.singleRoot(zip)
             let child = Progress(totalUnitCount: 1, parent: progress, pendingUnitCount: 1)
-            outputs.append(try await OutputWriter.write(into: item.url.deletingLastPathComponent(),
+            outputs.append(try await OutputWriter.write(into: OutputWriter.destination(for: item.url),
                                                         baseName: root ?? item.url.deletingPathExtension().lastPathComponent,
                                                         pathExtension: "") { temp in
                 try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: false)

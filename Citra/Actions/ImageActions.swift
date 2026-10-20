@@ -38,7 +38,7 @@ enum ImageCodec {
                         nameSuffix: String? = nil) async throws -> URL {
         let src = try source(url)
         let name = url.deletingPathExtension().lastPathComponent
-        return try await OutputWriter.write(into: url.deletingLastPathComponent(),
+        return try await OutputWriter.write(into: OutputWriter.destination(for: url),
                                             baseName: nameSuffix.map { "\(name) \($0)" } ?? name,
                                             pathExtension: fileExtension) { temp in
             guard let dest = CGImageDestinationCreateWithURL(temp as CFURL, type.identifier as CFString, 1, nil)
@@ -88,7 +88,8 @@ struct ImageConverter: FileAction {
         var outputs: [URL] = []
         for item in items {
             try Task.checkCancellation()
-            outputs.append(try await ImageCodec.convert(item.url, to: target, fileExtension: fileExtension))
+            let quality = target == .jpeg ? AppSettings.jpegQuality : target == .heic ? AppSettings.heicQuality : 1
+            outputs.append(try await ImageCodec.convert(item.url, to: target, fileExtension: fileExtension, quality: quality))
             progress.completedUnitCount += 1
         }
         return ActionResult(files: outputs)
@@ -114,7 +115,7 @@ struct ImageToPDF: FileAction {
             let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil) as? [CFString: Any] ?? [:]
             let dpi = (props[kCGImagePropertyDPIWidth] as? Double).flatMap { $0 > 0 ? $0 : nil } ?? 72
             let size = CGSize(width: Double(image.width) * 72 / dpi, height: Double(image.height) * 72 / dpi)
-            outputs.append(try await OutputWriter.write(into: item.url.deletingLastPathComponent(),
+            outputs.append(try await OutputWriter.write(into: OutputWriter.destination(for: item.url),
                                                         baseName: item.url.deletingPathExtension().lastPathComponent,
                                                         pathExtension: "pdf") { temp in
                 var box = CGRect(origin: .zero, size: size)

@@ -50,7 +50,7 @@ final class RadialMenuPanelController {
         model.confirmed = nil
         if isShown {
             if model.items != items {
-                withAnimation(.snappy(duration: 0.2)) {
+                withAnimation(RingMotion.scaled(.snappy(duration: 0.2))) {
                     model.items = items
                     model.hovered = nil
                     model.generation += 1
@@ -64,17 +64,25 @@ final class RadialMenuPanelController {
 
         isShown = true
         dismissToken += 1
+        RingMetrics.capture() // Appearance settings apply from this ring on
         model.items = items
         model.hovered = nil
+        place(centeredAt: NSEvent.mouseLocation, size: CGSize(width: model.panelSide, height: model.panelSide))
+        backdrop.fit()
+        guard RingMetrics.motion != .off else {
+            model.phase = .shown
+            backdrop.alphaValue = 1
+            panel.orderFrontRegardless()
+            return
+        }
         model.phase = .hidden
         backdrop.alphaValue = 0
-        place(centeredAt: NSEvent.mouseLocation, size: CGSize(width: model.panelSide, height: model.panelSide))
         panel.orderFrontRegardless()
         // Next run-loop pass, so the first frame on screen is the start state and the appear animates.
         DispatchQueue.main.async { [weak self] in
             guard let self, isShown else { return }
-            withAnimation(.spring(duration: 0.22, bounce: 0.18)) { model.phase = .shown }
-            fadeBackdrop(to: 1, duration: 0.16)
+            withAnimation(RingMotion.scaled(.spring(duration: 0.22, bounce: 0.18))) { model.phase = .shown }
+            fadeBackdrop(to: 1, duration: RingMotion.duration(0.16))
         }
     }
 
@@ -93,9 +101,10 @@ final class RadialMenuPanelController {
         isShown = false
         dismissToken += 1
         let token = dismissToken
-        withAnimation(.easeIn(duration: 0.18)) { model.phase = .dismissed }
-        fadeBackdrop(to: 0, duration: 0.18)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+        guard RingMetrics.motion != .off else { return finishHiding() }
+        withAnimation(RingMotion.scaled(.easeIn(duration: 0.18))) { model.phase = .dismissed }
+        fadeBackdrop(to: 0, duration: RingMotion.duration(0.18))
+        DispatchQueue.main.asyncAfter(deadline: .now() + RingMotion.duration(0.2)) { [weak self] in
             guard let self, dismissToken == token else { return }
             finishHiding()
         }

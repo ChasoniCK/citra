@@ -47,7 +47,8 @@ final class ShelfController: NSObject, NSWindowDelegate {
             let mouse = NSEvent.mouseLocation
             let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
             if let visible = screen?.visibleFrame {
-                panel.setFrameOrigin(CGPoint(x: visible.maxX - panel.frame.width, y: visible.midY - panel.frame.height / 2))
+                let x = AppSettings.shelfEdge == .left ? visible.minX : visible.maxX - panel.frame.width
+                panel.setFrameOrigin(CGPoint(x: x, y: visible.midY - panel.frame.height / 2))
             }
             panel.orderFrontRegardless()
         }

@@ -14,6 +14,12 @@ enum OutputWriter {
         }
     }
 
+    /// Where a result of `source` goes: next to it, or into the folder chosen in Settings.
+    static func destination(for source: URL, location: OutputLocation = AppSettings.outputLocation,
+                            folder: URL? = AppSettings.outputFolder) -> URL {
+        location == .folder ? folder ?? source.deletingLastPathComponent() : source.deletingLastPathComponent()
+    }
+
     static func write(into directory: URL, baseName: String, pathExtension: String,
                       _ body: (URL) async throws -> Void) async throws -> URL {
         let fm = FileManager.default

@@ -37,6 +37,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let coordinator = AppCoordinator()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        AppSettings.registerDefaults()
         coordinator.start()
     }
 }

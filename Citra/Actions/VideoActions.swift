@@ -91,8 +91,10 @@ struct VideoToMOV: FileAction {
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await Video.each(items, progress) { item, child in
-            try await OutputWriter.write(into: item.url.deletingLastPathComponent(), baseName: Video.baseName(item), pathExtension: "mov") { temp in
-                try await Video.export(AVURLAsset(url: item.url), name: item.url.lastPathComponent, preset: AVAssetExportPresetPassthrough,
+            try await OutputWriter.write(into: OutputWriter.destination(for: item.url), baseName: Video.baseName(item), pathExtension: "mov") { temp in
+                let copy = AppSettings.videoQuality == .passthrough
+                try await Video.export(AVURLAsset(url: item.url), name: item.url.lastPathComponent,
+                                       preset: copy ? AVAssetExportPresetPassthrough : AVAssetExportPresetHighestQuality,
                                        fallback: AVAssetExportPresetHighestQuality, as: .mov, to: temp, progress: child)
             }
         }
@@ -110,7 +112,7 @@ struct VideoToM4A: FileAction {
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await Video.each(items, progress) { item, child in
             try await Video.requireAudio(AVURLAsset(url: item.url), item)
-            return try await OutputWriter.write(into: item.url.deletingLastPathComponent(), baseName: Video.baseName(item), pathExtension: "m4a") { temp in
+            return try await OutputWriter.write(into: OutputWriter.destination(for: item.url), baseName: Video.baseName(item), pathExtension: "m4a") { temp in
                 try await Video.export(AVURLAsset(url: item.url), name: item.url.lastPathComponent, preset: AVAssetExportPresetAppleM4A,
                                        as: .m4a, to: temp, progress: child)
             }
@@ -142,7 +144,7 @@ struct MuteVideo: FileAction {
                 copy.preferredTransform = try await track.load(.preferredTransform)
             }
             let type = Video.sameContainer(item)
-            return try await OutputWriter.write(into: item.url.deletingLastPathComponent(), baseName: Video.baseName(item, "muted"),
+            return try await OutputWriter.write(into: OutputWriter.destination(for: item.url), baseName: Video.baseName(item, "muted"),
                                                 pathExtension: item.url.pathExtension) { temp in
                 try await Video.export(composition, name: item.url.lastPathComponent, preset: AVAssetExportPresetPassthrough,
                                        fallback: AVAssetExportPresetHighestQuality, as: type, to: temp, progress: child)
@@ -174,7 +176,7 @@ struct VideoSnapshot: FileAction {
             } catch {
                 throw Video.Failure.exportFailed(item.url.lastPathComponent, error.localizedDescription)
             }
-            let out = try await OutputWriter.write(into: item.url.deletingLastPathComponent(), baseName: Video.baseName(item, "snapshot"),
+            let out = try await OutputWriter.write(into: OutputWriter.destination(for: item.url), baseName: Video.baseName(item, "snapshot"),
                                                    pathExtension: "png") { temp in
                 guard let dest = CGImageDestinationCreateWithURL(temp as CFURL, UTType.png.identifier as CFString, 1, nil)
                 else { throw ImageCodec.Failure.encodeFailed("PNG") }

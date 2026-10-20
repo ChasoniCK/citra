@@ -21,6 +21,7 @@ final class DragMonitor {
     private var inSession = false
     private var suppressed = false
     private var mode: MenuMode?
+    private var mapping = ModifierMapping()
 
     func start() {
         monitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { [weak self] _ in
@@ -30,6 +31,7 @@ final class DragMonitor {
     }
 
     private func mouseDown() {
+        guard AppSettings.isEnabled else { return }
         changeCountAtMouseDown = dragPasteboard.changeCount
         guard timer == nil else { return }
         let t = Timer(timeInterval: 1.0 / 60, repeats: true) { [weak self] _ in
@@ -50,6 +52,7 @@ final class DragMonitor {
                                                   options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
             guard !urls.isEmpty else { return }
             inSession = true
+            mapping = AppSettings.mapping
             PocLog.write("session begin: \(urls.count) item(s)")
             onBegin(urls)
         }
@@ -60,7 +63,7 @@ final class DragMonitor {
             PocLog.write("Escape: ring suppressed until mouse up")
         }
 
-        let newMode = suppressed ? nil : MenuMode.resolve(NSEvent.modifierFlags)
+        let newMode = suppressed ? nil : MenuMode.resolve(NSEvent.modifierFlags, mapping: mapping)
         if newMode != mode {
             mode = newMode
             onModeChange(newMode)

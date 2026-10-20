@@ -22,6 +22,8 @@
 		54C43F2B3AB6C5DD8E2AE590 /* ImageConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC83C3E0B937FE715114DB1F /* ImageConverterTests.swift */; };
 		641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */; };
 		67F52E284373C9432432B2BA /* Shelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5443F14F1C959719197C34 /* Shelf.swift */; };
+		6E34B9EF5984A291DBC1B817 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 095CC85DD2E032527DE9237B /* SettingsTests.swift */; };
+		6F164C802B1A0711C9BC399D /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206EC586047089A49C1C757E /* AppSettings.swift */; };
 		717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90006D9E13444C860F65C897 /* DragMonitor.swift */; };
 		73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */; };
 		843A7DCDA634573F5A393B07 /* TestZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C699FA37872BB2B3DFFAC43D /* TestZip.swift */; };
@@ -68,8 +70,10 @@
 /* Begin PBXFileReference section */
 		06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitraApp.swift; sourceTree = "<group>"; };
 		0774F0A2D48C991C031DFF5F /* Citra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Citra.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		095CC85DD2E032527DE9237B /* SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
 		0BC7B15DAF066681674CAF14 /* VideoActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoActions.swift; sourceTree = "<group>"; };
 		10972251625DB0EFBD826B7F /* TestFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiles.swift; sourceTree = "<group>"; };
+		206EC586047089A49C1C757E /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		30128D5300DE1561E6708C46 /* Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zip.swift; sourceTree = "<group>"; };
 		3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayout.swift; sourceTree = "<group>"; };
 		33F67CF9A0485DFDDA295E8D /* PocLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocLog.swift; sourceTree = "<group>"; };
@@ -126,6 +130,14 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
+		07A9D553A2DDF45C344EE3DE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				206EC586047089A49C1C757E /* AppSettings.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		10B2FC08D9443CDC206495EB /* Actions */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +181,7 @@
 				5FB93DAAB8C4DF1F9DDFC451 /* App */,
 				A0636BE92AD042F532A7ACB8 /* Drag */,
 				D23F4A92832816DEE7B9211B /* Menu */,
+				07A9D553A2DDF45C344EE3DE /* Settings */,
 				B37DC794BE7EBB02D5A2CAF1 /* Shelf */,
 				045133F47035B624BAB73F18 /* Support */,
 				A5C2C376395133D8E155FD72 /* Tasks */,
@@ -253,6 +266,7 @@
 				F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */,
 				3F2EA16542447DBADBC77580 /* RepackTests.swift */,
 				BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */,
+				095CC85DD2E032527DE9237B /* SettingsTests.swift */,
 				A25D18BAAC8DDA2E1020236F /* TaskManagerTests.swift */,
 				7E3872C7E55936DC73A6819C /* VideoTests.swift */,
 				A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */,
@@ -365,6 +379,7 @@
 				E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */,
 				ECC08CBFA8247D8D706F04D0 /* RepackTests.swift in Sources */,
 				E3B8D432D44650CA9E379989 /* RingRenderTests.swift in Sources */,
+				6E34B9EF5984A291DBC1B817 /* SettingsTests.swift in Sources */,
 				0DB72418D3289BAA54FCC2D3 /* TaskManagerTests.swift in Sources */,
 				F80DA1E2D43FC66444854229 /* TestFiles.swift in Sources */,
 				D495141AA7E10AEF4E66ED01 /* TestVideo.swift in Sources */,
@@ -379,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				210DEB3910536E8CB7324F3B /* AppCoordinator.swift in Sources */,
+				6F164C802B1A0711C9BC399D /* AppSettings.swift in Sources */,
 				D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */,
 				717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */,
 				B63D684B2440FD18EEDF3CB7 /* DropOperation.swift in Sources */,
