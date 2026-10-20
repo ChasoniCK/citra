@@ -32,7 +32,7 @@ enum Registry {
     static func all(for mode: MenuMode) -> [any FileAction] {
         switch mode {
         case .conversion: ImageConverter.all + [ImageToPDF()]
-        case .tools: [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata()]
+        case .tools: [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata(), ExtractArchive(), TestArchive()]
         case .fileActions: [CopyFilesAction(), CopyPathAction()]
         }
     }

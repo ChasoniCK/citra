@@ -23,6 +23,7 @@
 		641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */; };
 		717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90006D9E13444C860F65C897 /* DragMonitor.swift */; };
 		73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */; };
+		843A7DCDA634573F5A393B07 /* TestZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C699FA37872BB2B3DFFAC43D /* TestZip.swift */; };
 		8600CB55399A14322A953C2B /* RingBackdrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3674297301CC69AB1EB2C938 /* RingBackdrop.swift */; };
 		8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B505454B8EA3488C8E116253 /* FileNamingTests.swift */; };
 		94D49DCB44BC9BC5147463C9 /* OutputWriterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6A8AE27529338505C419DA9 /* OutputWriterTests.swift */; };
@@ -40,6 +41,8 @@
 		DC4EDE88C5A9A436F31C0D87 /* ImageActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F7722B28C006A183B3137F /* ImageActions.swift */; };
 		E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */; };
 		E3B8D432D44650CA9E379989 /* RingRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */; };
+		E561CF820A3651169E8B9450 /* Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30128D5300DE1561E6708C46 /* Zip.swift */; };
+		E96253FA27257AF5C42D96AE /* ZipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */; };
 		F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */; };
 		F80DA1E2D43FC66444854229 /* TestFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10972251625DB0EFBD826B7F /* TestFiles.swift */; };
 		FD823559CE7D94087FD36C29 /* RadialMenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB88BC382160C69197801B0 /* RadialMenuModel.swift */; };
@@ -59,6 +62,7 @@
 		06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitraApp.swift; sourceTree = "<group>"; };
 		0774F0A2D48C991C031DFF5F /* Citra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Citra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10972251625DB0EFBD826B7F /* TestFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFiles.swift; sourceTree = "<group>"; };
+		30128D5300DE1561E6708C46 /* Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zip.swift; sourceTree = "<group>"; };
 		3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayout.swift; sourceTree = "<group>"; };
 		33F67CF9A0485DFDDA295E8D /* PocLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocLog.swift; sourceTree = "<group>"; };
 		3674297301CC69AB1EB2C938 /* RingBackdrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBackdrop.swift; sourceTree = "<group>"; };
@@ -78,10 +82,12 @@
 		9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayoutTests.swift; sourceTree = "<group>"; };
 		9FB88BC382160C69197801B0 /* RadialMenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuModel.swift; sourceTree = "<group>"; };
 		A25D18BAAC8DDA2E1020236F /* TaskManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManagerTests.swift; sourceTree = "<group>"; };
+		A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipTests.swift; sourceTree = "<group>"; };
 		B505454B8EA3488C8E116253 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
 		B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacementTests.swift; sourceTree = "<group>"; };
 		BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingRenderTests.swift; sourceTree = "<group>"; };
 		C1441EB09A4F1D4FAD8C677E /* FileAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAction.swift; sourceTree = "<group>"; };
+		C699FA37872BB2B3DFFAC43D /* TestZip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestZip.swift; sourceTree = "<group>"; };
 		C7D708B57AB824EFFD453B65 /* FileActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileActions.swift; sourceTree = "<group>"; };
 		C9F7722B28C006A183B3137F /* ImageActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageActions.swift; sourceTree = "<group>"; };
 		D09BC96DD3F722B484165CF5 /* FileTypeResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTypeResolverTests.swift; sourceTree = "<group>"; };
@@ -115,6 +121,7 @@
 				C9F7722B28C006A183B3137F /* ImageActions.swift */,
 				93424C65C0744925FF40D5BB /* ImageTools.swift */,
 				411F8A230064763BE0FE450A /* OutputWriter.swift */,
+				30128D5300DE1561E6708C46 /* Zip.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -132,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				10972251625DB0EFBD826B7F /* TestFiles.swift */,
+				C699FA37872BB2B3DFFAC43D /* TestZip.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -218,6 +226,7 @@
 				F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */,
 				BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */,
 				A25D18BAAC8DDA2E1020236F /* TaskManagerTests.swift */,
+				A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */,
 				7A74CC6771879FE1F01B0AF5 /* Support */,
 			);
 			path = CitraTests;
@@ -325,6 +334,8 @@
 				E3B8D432D44650CA9E379989 /* RingRenderTests.swift in Sources */,
 				0DB72418D3289BAA54FCC2D3 /* TaskManagerTests.swift in Sources */,
 				F80DA1E2D43FC66444854229 /* TestFiles.swift in Sources */,
+				843A7DCDA634573F5A393B07 /* TestZip.swift in Sources */,
+				E96253FA27257AF5C42D96AE /* ZipTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +365,7 @@
 				641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */,
 				8600CB55399A14322A953C2B /* RingBackdrop.swift in Sources */,
 				00EC7CD40DF15ACCF4C6B206 /* TaskManager.swift in Sources */,
+				E561CF820A3651169E8B9450 /* Zip.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
