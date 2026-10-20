@@ -18,7 +18,9 @@ struct FileItem: Sendable, Equatable {
 
 /// Type by content first (magic bytes of the formats Citra acts on), then file-system metadata, then extension.
 enum FileTypeResolver {
-    static func resolve(_ url: URL) -> FileItem {
+    /// `readingContent: false` before a drop: opening a file in Downloads, Desktop or Documents without the
+    /// user's drop triggers a macOS folder-access prompt, while metadata and the extension do not.
+    static func resolve(_ url: URL, readingContent: Bool = true) -> FileItem {
         let values = try? url.resourceValues(forKeys: [.isDirectoryKey, .isPackageKey, .contentTypeKey])
         let isDirectory = values?.isDirectory ?? false
         let isPackage = values?.isPackage ?? false
@@ -28,7 +30,7 @@ enum FileTypeResolver {
         }
         let metadata = values?.contentType
         let byExtension = UTType(filenameExtension: url.pathExtension)
-        if let sniffed = sniff(url) {
+        if readingContent, let sniffed = sniff(url) {
             // A more specific declared type that is still compatible (DOCX is a ZIP) wins.
             if let metadata, metadata != sniffed, metadata.conforms(to: sniffed) { return FileItem(url: url, type: metadata) }
             return FileItem(url: url, type: sniffed)

@@ -19,9 +19,9 @@ final class AppCoordinator {
         notifier.start()
 
         monitor.onBegin = { [unowned self] urls in
-            items = urls.map(FileTypeResolver.resolve)
+            // No file contents before the drop (folder-access prompt); the drop path re-resolves with content.
+            items = urls.map { FileTypeResolver.resolve($0, readingContent: false) }
             panel.sessionBegan()
-            Task { [items] in await MediaInfo.load(items) } // audio tracks, so silent videos get no Mute / M4A
         }
         monitor.onModeChange = { [unowned self] mode in
             guard let mode else { return panel.hide() }
@@ -37,7 +37,7 @@ final class AppCoordinator {
         }
         panel.onDrop = { [unowned self] item, urls in
             guard let action = shown[item.id], !urls.isEmpty else { return }
-            tasks.run(action, items: urls.map(FileTypeResolver.resolve))
+            tasks.run(action, items: urls.map { FileTypeResolver.resolve($0) })
         }
         monitor.start()
     }

@@ -8,7 +8,10 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     MACOSX_DEPLOYMENT_TARGET: "15.0"
-    CODE_SIGN_IDENTITY: "-"
+    # Apple Development, not ad-hoc: a stable identity keeps privacy grants across rebuilds and lets
+    # notifications work. Release will switch to Developer ID for distribution.
+    CODE_SIGN_IDENTITY: "Apple Development"
+    DEVELOPMENT_TEAM: 4HHFU7AD84
     CODE_SIGN_STYLE: Manual
 targets:
   Citra:

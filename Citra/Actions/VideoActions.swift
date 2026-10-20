@@ -3,35 +3,17 @@ import Foundation
 import ImageIO
 import UniformTypeIdentifiers
 
-/// Which videos have an audio track. Loaded in the background when a drag starts, so the ring can hide
-/// Mute / M4A for silent videos (screen recordings) without blocking; unknown means "offer it".
-enum MediaInfo {
-    private final class Cache: @unchecked Sendable { // guarded by `lock`
-        let lock = NSLock()
-        var hasAudio: [URL: Bool] = [:]
-    }
-
-    private static let cache = Cache()
-
-    static func hasAudio(_ url: URL) -> Bool? { cache.lock.withLock { cache.hasAudio[url] } }
-
-    static func load(_ items: [FileItem]) async {
-        for item in items where Video.isVideo(item) && hasAudio(item.url) == nil {
-            let audio = (try? await AVURLAsset(url: item.url).loadTracks(withMediaType: .audio)) ?? []
-            cache.lock.withLock { cache.hasAudio[item.url] = !audio.isEmpty }
-        }
-    }
-}
-
 enum Video {
     enum Failure: LocalizedError {
         case exportFailed(String, String)
         case noVideoTrack(String)
+        case noAudioTrack(String)
 
         var errorDescription: String? {
             switch self {
             case .exportFailed(let name, let reason): "Could not process “\(name)”: \(reason)"
             case .noVideoTrack(let name): "“\(name)” has no video track."
+            case .noAudioTrack(let name): "“\(name)” has no audio track, so there is nothing to extract or remove."
             }
         }
     }
@@ -43,7 +25,12 @@ enum Video {
         !item.isDirectory && item.conforms(to: .movie) && openable.contains(item.type.identifier)
     }
 
-    static func hasAudio(_ item: FileItem) -> Bool { MediaInfo.hasAudio(item.url) ?? true }
+    /// Checked when the action runs: reading tracks before the drop would trigger a folder-access prompt.
+    static func requireAudio(_ asset: AVURLAsset, _ item: FileItem) async throws {
+        guard !(try await asset.loadTracks(withMediaType: .audio)).isEmpty else {
+            throw Failure.noAudioTrack(item.url.lastPathComponent)
+        }
+    }
 
     /// Container type matching the source, for exports that keep the format.
     static func sameContainer(_ item: FileItem) -> AVFileType { item.conforms(to: .quickTimeMovie) ? .mov : .mp4 }
@@ -117,12 +104,13 @@ struct VideoToM4A: FileAction {
     let id = "video.m4a"
     let title = "M4A"
 
-    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { Video.isVideo($0) && Video.hasAudio($0) } }
+    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy(Video.isVideo) }
     func centerText(for items: [FileItem]) -> String? { conversionText(items, to: title) }
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await Video.each(items, progress) { item, child in
-            try await OutputWriter.write(into: item.url.deletingLastPathComponent(), baseName: Video.baseName(item), pathExtension: "m4a") { temp in
+            try await Video.requireAudio(AVURLAsset(url: item.url), item)
+            return try await OutputWriter.write(into: item.url.deletingLastPathComponent(), baseName: Video.baseName(item), pathExtension: "m4a") { temp in
                 try await Video.export(AVURLAsset(url: item.url), name: item.url.lastPathComponent, preset: AVAssetExportPresetAppleM4A,
                                        as: .m4a, to: temp, progress: child)
             }
@@ -136,12 +124,13 @@ struct MuteVideo: FileAction {
     let title = "Mute"
     let symbol: String? = "speaker.slash"
 
-    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { Video.isVideo($0) && Video.hasAudio($0) } }
+    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy(Video.isVideo) }
     func centerText(for items: [FileItem]) -> String? { "Remove audio" }
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await Video.each(items, progress) { item, child in
             let asset = AVURLAsset(url: item.url)
+            try await Video.requireAudio(asset, item)
             let tracks = try await asset.loadTracks(withMediaType: .video)
             guard !tracks.isEmpty else { throw Video.Failure.noVideoTrack(item.url.lastPathComponent) }
             let duration = try await asset.load(.duration)

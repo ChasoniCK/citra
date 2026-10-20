@@ -14,7 +14,6 @@ struct VideoTests {
     func video(_ name: String, audio: Bool = true, type: AVFileType = .mp4) async throws -> FileItem {
         let url = folder.url.appending(path: name)
         try await TestVideo.make(url, audio: audio, fileType: type)
-        await MediaInfo.load([FileTypeResolver.resolve(url)])
         return FileTypeResolver.resolve(url)
     }
 
@@ -25,10 +24,16 @@ struct VideoTests {
         #expect(try action(.conversion, "video.mov").centerText(for: [mp4]) == "MP4 → MOV")
     }
 
-    @Test func silentVideoGetsNoAudioActions() async throws {
+    /// Tracks are not read before the drop (folder-access prompt), so a silent video is told at run time.
+    @Test func silentVideoGetsAClearMessageAndNoFile() async throws {
         let silent = try await video("screen.mp4", audio: false)
-        #expect(Registry.actions(for: .conversion, items: [silent]).map(\.id) == ["video.mov"])
-        #expect(Registry.actions(for: .tools, items: [silent]).map(\.id) == ["video.snapshot"])
+        await #expect(throws: Video.Failure.self) {
+            try await action(.conversion, "video.m4a").perform(items: [silent], progress: Progress())
+        }
+        await #expect(throws: Video.Failure.self) {
+            try await action(.tools, "video.mute").perform(items: [silent], progress: Progress())
+        }
+        #expect(try folder.names() == ["screen.mp4"])
     }
 
     @Test func movIsNotOfferedForMOV() async throws {
