@@ -25,7 +25,7 @@ extension FileAction {
 enum Registry {
     static func all(for mode: MenuMode) -> [any FileAction] {
         switch mode {
-        case .conversion: []
+        case .conversion: ImageConverter.all + [ImageToPDF()]
         case .tools: []
         case .fileActions: [CopyFilesAction(), CopyPathAction()]
         }
