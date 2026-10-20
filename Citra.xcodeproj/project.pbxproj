@@ -24,6 +24,7 @@
 		D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */; };
 		D29982F7E0E79A7D0F092DCC /* PocLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F67CF9A0485DFDDA295E8D /* PocLog.swift */; };
 		D9EB154BC091D67A8A0BFFC0 /* ImageConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B94A316CD15379F967CBFF /* ImageConversionTests.swift */; };
+		E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */; };
 		F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperation.swift; sourceTree = "<group>"; };
 		E1F871887DE1A5C1DC654A66 /* ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConversion.swift; sourceTree = "<group>"; };
 		E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelController.swift; sourceTree = "<group>"; };
+		F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -149,6 +151,7 @@
 				4114BF72D4578A43449A429F /* MenuModeTests.swift */,
 				B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */,
 				9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */,
+				F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */,
 			);
 			path = CitraTests;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 				1848E9C589F4CABE269EB1F4 /* MenuModeTests.swift in Sources */,
 				F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */,
 				A3EEF9578F5FD42AD78E4DED /* RadialLayoutTests.swift in Sources */,
+				E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,11 +22,11 @@ final class DragMonitor {
     private var suppressed = false
     private var mode: MenuMode?
     private var sessionStart = Date.distantPast
+    private var lastDraggedEvent = Date.distantPast
 
     // Diagnostics answering the feasibility questions.
     private var draggedEventsDuringSession = 0
     private var sawGlobalMouseUpDuringSession = false
-    private var sawEscapeKeyState = false
 
     #if DEBUG
     /// `-CitraDebugMode tools` pins a mode so an automated drag without modifiers can reach the panel.
@@ -35,15 +35,11 @@ final class DragMonitor {
 
     func start() {
         addMonitor(.leftMouseDown) { $0.mouseDown() }
-        addMonitor(.leftMouseDragged) { if $0.inSession { $0.draggedEventsDuringSession += 1 } }
+        addMonitor(.leftMouseDragged) {
+            $0.lastDraggedEvent = .now
+            if $0.inSession { $0.draggedEventsDuringSession += 1 }
+        }
         addMonitor(.leftMouseUp) { if $0.inSession { $0.sawGlobalMouseUpDuringSession = true } }
-    }
-
-    /// Hides the ring for the rest of this drag, e.g. after the drag was cancelled over it.
-    func suppressUntilMouseUp() {
-        guard inSession else { return }
-        suppressed = true
-        if mode != nil { mode = nil; onModeChange(nil) }
     }
 
     private func addMonitor(_ mask: NSEvent.EventTypeMask, _ body: @escaping @MainActor (DragMonitor) -> Void) {
@@ -80,24 +76,23 @@ final class DragMonitor {
             sessionStart = .now
             draggedEventsDuringSession = 0
             sawGlobalMouseUpDuringSession = false
-            sawEscapeKeyState = false
             PocLog.write("session begin: \(urls.count) item(s) \(urls.map(\.lastPathComponent)) flags=\(Self.describe(NSEvent.modifierFlags))")
             onBegin(urls)
         }
 
-        // Experiment: is the Escape key state readable without Input Monitoring?
-        if !sawEscapeKeyState, CGEventSource.keyState(.combinedSessionState, key: CGKeyCode(kVK_Escape)) {
-            sawEscapeKeyState = true
-            PocLog.write("Escape key state observed during drag")
+        // Escape cancels the drag in the source app; hide the ring until the button is released.
+        // Readable without Input Monitoring (poc.log run 1).
+        if !suppressed, CGEventSource.keyState(.combinedSessionState, key: CGKeyCode(kVK_Escape)) {
+            suppressed = true
+            PocLog.write("Escape during drag → ring suppressed until mouse up")
         }
 
-        guard !suppressed else { return }
-        var newMode = MenuMode.resolve(NSEvent.modifierFlags)
+        var newMode = suppressed ? nil : MenuMode.resolve(NSEvent.modifierFlags)
         #if DEBUG
-        newMode = debugMode ?? newMode
+        if !suppressed { newMode = debugMode ?? newMode }
         #endif
         if newMode != mode {
-            PocLog.write("mode \(mode.map { "\($0)" } ?? "none") → \(newMode.map { "\($0)" } ?? "none") at +\(ms(since: sessionStart))ms flags=\(Self.describe(NSEvent.modifierFlags))")
+            PocLog.write("mode \(mode.map { "\($0)" } ?? "none") → \(newMode.map { "\($0)" } ?? "none") at +\(ms(since: sessionStart))ms flags=\(Self.describe(NSEvent.modifierFlags)), last mouse drag event \(ms(since: lastDraggedEvent))ms ago")
             mode = newMode
             onModeChange(newMode)
         }

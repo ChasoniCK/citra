@@ -15,7 +15,10 @@ final class AppCoordinator {
             + "accessibility trusted=\(AXIsProcessTrusted()), input monitoring granted=\(CGPreflightListenEventAccess()), "
             + "screens=\(NSScreen.screens.map { "\($0.localizedName) \($0.frame) @\($0.backingScaleFactor)x" })")
 
-        monitor.onBegin = { [unowned self] in urls = $0 }
+        monitor.onBegin = { [unowned self] in
+            urls = $0
+            panel.prepare()
+        }
         monitor.onModeChange = { [unowned self] mode in
             guard let mode else { return panel.hide() }
             let items = Self.items(for: mode, urls: urls)
@@ -26,10 +29,9 @@ final class AppCoordinator {
             panel.show(items, idleCenterText: Self.summary(of: urls))
         }
         monitor.onEnd = { [unowned self] in
-            panel.hide()
+            panel.endSession()
             urls = []
         }
-        panel.onCancelOverPanel = { [unowned self] in monitor.suppressUntilMouseUp() }
         panel.onDrop = { Self.perform($0, $1) }
         monitor.start()
     }
