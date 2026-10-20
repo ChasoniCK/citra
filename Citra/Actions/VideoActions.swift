@@ -81,21 +81,27 @@ enum Video {
     }
 }
 
-/// Re-wraps into QuickTime without re-encoding when the codecs allow it.
-struct VideoToMOV: FileAction {
-    let id = "video.mov"
-    let title = "MOV"
+/// MP4 ⇄ MOV without re-encoding when the codecs allow it (Settings › Conversions can force a re-encode).
+struct VideoRewrap: FileAction {
+    let target: AVFileType
+    static let mov = VideoRewrap(target: .mov)
+    static let mp4 = VideoRewrap(target: .mp4)
 
-    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { Video.isVideo($0) && !$0.conforms(to: .quickTimeMovie) } }
+    private var ext: String { target == .mov ? "mov" : "mp4" }
+    private var targetType: UTType { target == .mov ? .quickTimeMovie : .mpeg4Movie }
+    var id: String { "video.\(ext)" }
+    var title: String { ext.uppercased() }
+
+    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { Video.isVideo($0) && !$0.conforms(to: targetType) } }
     func centerText(for items: [FileItem]) -> String? { conversionText(items, to: title) }
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await Video.each(items, progress) { item, child in
-            try await OutputWriter.write(into: OutputWriter.destination(for: item.url), baseName: Video.baseName(item), pathExtension: "mov") { temp in
+            try await OutputWriter.write(into: OutputWriter.destination(for: item.url), baseName: Video.baseName(item), pathExtension: ext) { temp in
                 let copy = AppSettings.videoQuality == .passthrough
                 try await Video.export(AVURLAsset(url: item.url), name: item.url.lastPathComponent,
                                        preset: copy ? AVAssetExportPresetPassthrough : AVAssetExportPresetHighestQuality,
-                                       fallback: AVAssetExportPresetHighestQuality, as: .mov, to: temp, progress: child)
+                                       fallback: AVAssetExportPresetHighestQuality, as: target, to: temp, progress: child)
             }
         }
     }

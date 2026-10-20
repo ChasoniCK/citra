@@ -56,6 +56,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         AppSettings.registerDefaults()
+        Task.detached(priority: .utility) { _ = FFmpeg.current } // probe ffmpeg off the drag path
         coordinator.start()
     }
 }

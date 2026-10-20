@@ -17,17 +17,40 @@ enum ProcessRunner {
         let process = Process()
         let lock = NSLock()
         var stderr = Data()
+        var stdout = Data()
+        var partialLine = Data()
+
+        /// Appends a stdout chunk and returns the lines it completed.
+        func appendOutput(_ chunk: Data) -> [String] {
+            lock.withLock {
+                stdout.append(chunk)
+                partialLine.append(chunk)
+                var lines: [String] = []
+                while let newline = partialLine.firstIndex(of: 0x0A) {
+                    lines.append(String(decoding: partialLine[partialLine.startIndex..<newline], as: UTF8.self))
+                    partialLine.removeSubrange(partialLine.startIndex...newline)
+                }
+                return lines
+            }
+        }
     }
 
-    static func run(_ executable: URL, _ arguments: [String], environment: [String: String] = [:]) async throws {
+    /// Returns stdout; `onOutputLine` sees each stdout line as it arrives (ffmpeg `-progress pipe:1`).
+    @discardableResult
+    static func run(_ executable: URL, _ arguments: [String], environment: [String: String] = [:],
+                    onOutputLine: (@Sendable (String) -> Void)? = nil) async throws -> String {
         let box = Box()
         box.process.executableURL = executable
         box.process.arguments = arguments
         box.process.environment = ProcessInfo.processInfo.environment.merging(environment) { $1 }
-        box.process.standardOutput = FileHandle.nullDevice
-        let errors = Pipe()
+        let output = Pipe(), errors = Pipe()
+        box.process.standardOutput = output
         box.process.standardError = errors
-        errors.fileHandleForReading.readabilityHandler = { handle in // drained continuously so a chatty tool never blocks
+        // Both pipes are drained continuously, so a chatty tool never blocks on a full pipe.
+        output.fileHandleForReading.readabilityHandler = { handle in
+            box.appendOutput(handle.availableData).forEach { onOutputLine?($0) }
+        }
+        errors.fileHandleForReading.readabilityHandler = { handle in
             let chunk = handle.availableData
             box.lock.withLock { box.stderr.append(chunk) }
         }
@@ -36,7 +59,9 @@ enum ProcessRunner {
             try await withTaskCancellationHandler {
                 try await withCheckedThrowingContinuation { (done: CheckedContinuation<Void, Error>) in
                     box.process.terminationHandler = { process in
+                        output.fileHandleForReading.readabilityHandler = nil
                         errors.fileHandleForReading.readabilityHandler = nil
+                        box.appendOutput(output.fileHandleForReading.readDataToEndOfFile()).forEach { onOutputLine?($0) }
                         let rest = errors.fileHandleForReading.readDataToEndOfFile()
                         let message = box.lock.withLock { String(decoding: box.stderr + rest, as: UTF8.self) }
                         if process.terminationReason == .exit, process.terminationStatus == 0 {
@@ -57,6 +82,7 @@ enum ProcessRunner {
             throw error
         }
         try Task.checkCancellation()
+        return box.lock.withLock { String(decoding: box.stdout, as: UTF8.self) }
     }
 }
 

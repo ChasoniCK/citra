@@ -37,6 +37,7 @@
 		A809010E1FFFA441CB11AFCE /* ImageToolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2C3F20C7D5AF7E9B79D561 /* ImageToolsTests.swift */; };
 		ABC90A9DD23187A9FAC46A3B /* FileAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1441EB09A4F1D4FAD8C677E /* FileAction.swift */; };
 		AD9EE0EE0AED925DDFE909EA /* Repack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E51D50ADAD92454C3F4184 /* Repack.swift */; };
+		B22018437B5F3B7E8551C320 /* FFmpeg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D899CF8ACBDE5A60879ED1C /* FFmpeg.swift */; };
 		B63D684B2440FD18EEDF3CB7 /* DropOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */; };
 		B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */; };
 		BC89D3236235246CB2B8D810 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E767AB317A7996193BE7BF1 /* SettingsView.swift */; };
@@ -44,6 +45,7 @@
 		C1D2DC0CEAEE92A755A1BA3D /* FileTypeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0D7D190DE3CA89295281C6 /* FileTypeResolver.swift */; };
 		C90CC9DF8DD7ADFA27BDF48D /* VideoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E3872C7E55936DC73A6819C /* VideoTests.swift */; };
 		D06C88C8E7472A997A763C90 /* VideoActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC7B15DAF066681674CAF14 /* VideoActions.swift */; };
+		D200A76DE3CFB7B7D5030031 /* FFmpegTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B80BB2E6DF448DC806D5F1 /* FFmpegTests.swift */; };
 		D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A2D100DFD043E8CF6E66F9 /* CitraApp.swift */; };
 		D29982F7E0E79A7D0F092DCC /* PocLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F67CF9A0485DFDDA295E8D /* PocLog.swift */; };
 		D495141AA7E10AEF4E66ED01 /* TestVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E5BF39C8C915070C01BA98F /* TestVideo.swift */; };
@@ -82,6 +84,8 @@
 		3F2EA16542447DBADBC77580 /* RepackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepackTests.swift; sourceTree = "<group>"; };
 		4114BF72D4578A43449A429F /* MenuModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModeTests.swift; sourceTree = "<group>"; };
 		411F8A230064763BE0FE450A /* OutputWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputWriter.swift; sourceTree = "<group>"; };
+		4D899CF8ACBDE5A60879ED1C /* FFmpeg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFmpeg.swift; sourceTree = "<group>"; };
+		50B80BB2E6DF448DC806D5F1 /* FFmpegTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FFmpegTests.swift; sourceTree = "<group>"; };
 		57275E0E1AF873E59B60F70C /* CitraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CitraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		58031D99C1876AAC44B84FEB /* OverflowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverflowLayout.swift; sourceTree = "<group>"; };
 		595691CF8D6B4A7AEE53BAD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -144,6 +148,7 @@
 		10B2FC08D9443CDC206495EB /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				4D899CF8ACBDE5A60879ED1C /* FFmpeg.swift */,
 				C1441EB09A4F1D4FAD8C677E /* FileAction.swift */,
 				C7D708B57AB824EFFD453B65 /* FileActions.swift */,
 				919A28B349D3083FE0817301 /* FileNaming.swift */,
@@ -256,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				982DE7C9B3D00825A9E8FA03 /* DropOperationTests.swift */,
+				50B80BB2E6DF448DC806D5F1 /* FFmpegTests.swift */,
 				635E56F3B35F81C57DEAE7D0 /* FileActionsTests.swift */,
 				B505454B8EA3488C8E116253 /* FileNamingTests.swift */,
 				D09BC96DD3F722B484165CF5 /* FileTypeResolverTests.swift */,
@@ -369,6 +375,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2175B40B4B78CB603BC852CE /* DropOperationTests.swift in Sources */,
+				D200A76DE3CFB7B7D5030031 /* FFmpegTests.swift in Sources */,
 				8BA7462546A93800823D636D /* FileActionsTests.swift in Sources */,
 				8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */,
 				1553C51A60A381ECDA75E07D /* FileTypeResolverTests.swift in Sources */,
@@ -401,6 +408,7 @@
 				D2940ADBFCEC1F68165A81B5 /* CitraApp.swift in Sources */,
 				717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */,
 				B63D684B2440FD18EEDF3CB7 /* DropOperation.swift in Sources */,
+				B22018437B5F3B7E8551C320 /* FFmpeg.swift in Sources */,
 				ABC90A9DD23187A9FAC46A3B /* FileAction.swift in Sources */,
 				95AF6519AEBF40278475A4C0 /* FileActions.swift in Sources */,
 				16515402B2E008585EF4961C /* FileNaming.swift in Sources */,

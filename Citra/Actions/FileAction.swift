@@ -32,7 +32,9 @@ enum Registry {
     static func all(for mode: MenuMode) -> [any FileAction] {
         switch mode {
         case .conversion:
-            ImageConverter.all + [ImageToPDF(), RepackArchive(gzip: false), RepackArchive(gzip: true), VideoToMOV(), VideoToM4A()]
+            ImageConverter.all + [ImageToPDF(), RepackArchive(gzip: false), RepackArchive(gzip: true),
+                                  VideoRewrap.mov, VideoRewrap.mp4, VideoToM4A()]
+                + FFmpegFormat.all.map(FFmpegConverter.init)
         case .tools:
             [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata(), ExtractArchive(), TestArchive(),
              VideoSnapshot(), MuteVideo()]
