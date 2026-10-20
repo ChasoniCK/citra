@@ -16,8 +16,10 @@
 |---|---|---|
 | Изображения (всё, что читает ImageIO: PNG, JPEG, HEIC, TIFF, GIF, BMP, WebP…) | JPEG, PNG, HEIC, TIFF (кроме собственного формата), PDF | Resize (пресеты), Rotate 90°, Compress (только JPEG/HEIC), Metadata (удалить EXIF/GPS/IPTC/XMP) |
 | ZIP | TAR, TAR.GZ | Extract, Test |
-| Видео, которое открывает AVFoundation (MP4, MOV, M4V) | MOV (passthrough), M4A (если есть звук) | Snapshot (средний кадр → PNG), Mute (если есть звук) |
+| Видео, которое открывает AVFoundation (MP4, MOV, M4V) | MOV (passthrough), M4A | Snapshot (средний кадр → PNG), Mute |
 | Любые файлы и папки | — | — |
+
+M4A и Mute для видео без звука сообщают, что аудиодорожки нет, и ничего не создают: до drop Citra не читает файлы, чтобы macOS не запрашивала доступ к папкам.
 
 ⌃ File Actions для любых файлов и папок: AirDrop, Float (плавающая полка), Copy (⌘V в Finder вставляет сами файлы), Move (с вопросом при конфликте имён), Copy Path, Terminal.
 
