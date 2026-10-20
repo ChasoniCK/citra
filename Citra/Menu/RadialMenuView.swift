@@ -152,7 +152,7 @@ private struct SectorLabel: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
         }
-        .foregroundStyle(color.opacity(item.isPlaceholder ? 0.5 : 1))
+        .foregroundStyle(color)
         .frame(width: max(width, 20))
     }
 }

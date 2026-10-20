@@ -8,8 +8,6 @@ struct RadialMenuItem: Identifiable, Equatable {
     var symbol: String?
     /// Center text while hovered, e.g. "PNG → JPEG"; the title when nil.
     var detail: String?
-    /// PoC only: shown to exercise the layout, does nothing on drop.
-    var isPlaceholder = false
 }
 
 enum RingTarget: Equatable, Sendable {
