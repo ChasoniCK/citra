@@ -15,9 +15,11 @@ final class RadialMenuPanelController {
     /// PoC experiment, toggled from the menu bar: keep the panel ordered in for the whole drag and
     /// hide it by alpha + click-through instead of ordering it out.
     static let fadeExperimentKey = "CitraFadeExperiment"
-    private var fade: Bool { UserDefaults.standard.bool(forKey: Self.fadeExperimentKey) }
+    private let fadeExperiment: () -> Bool
+    private var fade: Bool { fadeExperiment() }
 
-    private let panel = RingPanel()
+    private let ring = RingPanel()
+    var panel: NSPanel { ring }
     private let dropView = DropTargetView()
     private(set) var isShown = false
     private var acceptsDrops = false
@@ -27,7 +29,8 @@ final class RadialMenuPanelController {
     private var loggedHiddenMessage = false
     private var lastLoggedMask: NSDragOperation?
 
-    init() {
+    init(fadeExperiment: @escaping () -> Bool = { UserDefaults.standard.bool(forKey: fadeExperimentKey) }) {
+        self.fadeExperiment = fadeExperiment
         let side = RadialMenuModel.panelSide
         let container = NSView(frame: CGRect(x: 0, y: 0, width: side, height: side))
         let hosting = NSHostingView(rootView: RadialMenuView(model: model))
@@ -50,7 +53,7 @@ final class RadialMenuPanelController {
         guard fade else { return }
         panel.alphaValue = 0
         panel.ignoresMouseEvents = true
-        panel.ordered(.above)
+        ring.ordered(.above)
         logWindowState("prepared (fade experiment)")
     }
 
@@ -72,7 +75,7 @@ final class RadialMenuPanelController {
             panel.ignoresMouseEvents = false
             panel.alphaValue = 1
         }
-        panel.ordered(.above)
+        ring.ordered(.above)
         shownAt = .now
         mouseAtShow = mouse
         dragMessageSinceShow = false
@@ -92,7 +95,7 @@ final class RadialMenuPanelController {
     /// after the release is polled), so keep accepting it and only take the panel off screen.
     func endSession() {
         conceal("hidden at session end")
-        panel.ordered(.out)
+        ring.ordered(.out)
     }
 
     private func conceal(_ reason: String) {
@@ -103,7 +106,7 @@ final class RadialMenuPanelController {
             panel.alphaValue = 0
             panel.ignoresMouseEvents = true
         } else {
-            panel.ordered(.out)
+            ring.ordered(.out)
         }
         PocLog.write("panel \(reason) (fade=\(fade))")
         probeWindowState(after: [100, 500], label: "after \(reason)")
@@ -207,6 +210,12 @@ private final class RingPanel: NSPanel {
         orderingFromController = true
         defer { orderingFromController = false }
         if place == .out { orderOut(nil) } else { orderFrontRegardless() }
+    }
+
+    /// AppKit spring-loading sends this to the window under a lingering drag (poc.log run 2:
+    /// `_NSSpringLoadingTrackingProc`). The ring is shown only by its controller, so ignore it.
+    override func makeKeyAndOrderFront(_ sender: Any?) {
+        PocLog.write("ignored makeKeyAndOrderFront (spring-loading)")
     }
 
     override func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {

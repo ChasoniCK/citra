@@ -40,7 +40,7 @@ struct RadialMenuPanelTests {
     var overSector0: NSPoint { NSPoint(x: RadialMenuModel.panelSide / 2, y: RadialMenuModel.panelSide / 2 + 90) }
 
     @Test func shownRingAcceptsDropOnSector() {
-        let panel = RadialMenuPanelController()
+        let panel = RadialMenuPanelController(fadeExperiment: { false })
         var dropped: [String] = []
         panel.onDrop = { item, _ in dropped.append(item.id) }
         panel.show(items, idleCenterText: "")
@@ -53,7 +53,7 @@ struct RadialMenuPanelTests {
 
     /// poc.log run 1: updates kept arriving after the modifier was released and the ring hidden.
     @Test func ringHiddenByModifierReleaseRefusesLateDragMessages() {
-        let panel = RadialMenuPanelController()
+        let panel = RadialMenuPanelController(fadeExperiment: { false })
         var dropped: [String] = []
         panel.onDrop = { item, _ in dropped.append(item.id) }
         panel.show(items, idleCenterText: "")
@@ -68,7 +68,7 @@ struct RadialMenuPanelTests {
 
     /// poc.log run 1: the release is often polled a few ms before `performDragOperation` arrives.
     @Test func dropArrivingAfterMouseUpIsStillAccepted() {
-        let panel = RadialMenuPanelController()
+        let panel = RadialMenuPanelController(fadeExperiment: { false })
         var dropped: [String] = []
         panel.onDrop = { item, _ in dropped.append(item.id) }
         panel.show(items, idleCenterText: "")
@@ -80,13 +80,24 @@ struct RadialMenuPanelTests {
     }
 
     @Test func showAfterHideBringsRingBack() {
-        let panel = RadialMenuPanelController()
+        let panel = RadialMenuPanelController(fadeExperiment: { false })
         panel.show(items, idleCenterText: "")
         panel.hide()
         panel.show(items, idleCenterText: "")
         #expect(panel.isShown)
         let drag = FakeDrag(at: overSector0, file: file)
         #expect(panel.dragMoved(drag, entered: true) == .copy)
+        panel.endSession()
+    }
+
+    /// poc.log run 2: AppKit spring-loading calls `makeKeyAndOrderFront` on the window under a
+    /// lingering drag, which put the hidden ring back on screen.
+    @Test func springLoadingDoesNotBringHiddenRingBack() {
+        let panel = RadialMenuPanelController(fadeExperiment: { false })
+        panel.show(items, idleCenterText: "")
+        panel.hide()
+        panel.panel.makeKeyAndOrderFront(nil)
+        #expect(!panel.panel.isVisible)
         panel.endSession()
     }
 }
