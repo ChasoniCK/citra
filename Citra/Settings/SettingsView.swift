@@ -209,7 +209,7 @@ private struct ConversionSettings: View {
     /// Registered actions grouped by what they work on, with availability on this Mac.
     private var groups: [(String, String, Bool)] {
         let all = Registry.all(for: .conversion) + Registry.all(for: .tools)
-        return [("image.", "Images"), ("zip.", "ZIP archives"), ("video.", "Video")].map { prefix, name in
+        return [("image.", "Images"), ("zip.", "ZIP archives"), ("video.", "Video"), ("pdf.", "PDF")].map { prefix, name in
             let actions = all.filter { $0.id.hasPrefix(prefix) }
             return (name, actions.map(\.title).joined(separator: ", "), actions.allSatisfy(\.isAvailable))
         }
@@ -225,6 +225,24 @@ private struct ConversionSettings: View {
                 Picker("MOV conversion", selection: $video) {
                     Text("Copy streams when possible (fast, lossless)").tag(VideoQuality.passthrough)
                     Text("Always re-encode").tag(VideoQuality.reencode)
+                }
+            }
+            Section("FFmpeg (MKV, WebM, AVI, WMV, MP3)") {
+                if let ffmpeg = FFmpeg.current {
+                    LabeledContent("Found") { Text((ffmpeg.ffmpeg.path as NSString).abbreviatingWithTildeInPath).foregroundStyle(.secondary) }
+                    ForEach(FFmpegFormat.all, id: \.ext) { format in
+                        LabeledContent(format.title) {
+                            Text(ffmpeg.supports(format) ? "Available" : "Missing encoder: \(format.encoders.filter { !ffmpeg.encoders.contains($0) }.joined(separator: ", "))")
+                                .foregroundStyle(ffmpeg.supports(format) ? Color.secondary : Color.orange)
+                        }
+                    }
+                } else {
+                    Text("Not installed. These formats appear in the menu once ffmpeg is installed with Homebrew (`brew install ffmpeg`) and Citra is restarted. Citra does not bundle ffmpeg.")
+                        .foregroundStyle(.secondary)
+                    Button("Copy Install Command") {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString("brew install ffmpeg", forType: .string)
+                    }
                 }
             }
             Section("Available on this Mac") {

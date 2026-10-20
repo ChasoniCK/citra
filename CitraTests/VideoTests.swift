@@ -20,8 +20,9 @@ struct VideoTests {
     @Test func mp4OffersMOVAndM4AAndTools() async throws {
         let mp4 = try await video("clip.mp4")
         // FFmpeg formats depend on the machine; the AVFoundation ones must always be there, in order.
-        #expect(Registry.actions(for: .conversion, items: [mp4]).map(\.id).filter { !$0.hasPrefix("ffmpeg.") } == ["video.mov", "video.m4a"])
-        #expect(Registry.actions(for: .tools, items: [mp4]).map(\.id) == ["video.snapshot", "video.mute"])
+        #expect(Registry.actions(for: .conversion, items: [mp4]).map(\.id).filter { !$0.hasPrefix("ffmpeg.") } == ["video.mov", "video.m4a", "video.gif"])
+        #expect(Registry.actions(for: .tools, items: [mp4]).map(\.id)
+                == ["video.compress", "video.mute", "video.trim", "video.crop", "video.speed", "video.snapshot"])
         #expect(try action(.conversion, "video.mov").centerText(for: [mp4]) == "MP4 → MOV")
     }
 
@@ -39,7 +40,7 @@ struct VideoTests {
 
     @Test func movIsNotOfferedForMOV() async throws {
         let mov = try await video("clip.mov", type: .mov)
-        #expect(Registry.actions(for: .conversion, items: [mov]).map(\.id).filter { !$0.hasPrefix("ffmpeg.") } == ["video.mp4", "video.m4a"])
+        #expect(Registry.actions(for: .conversion, items: [mov]).map(\.id).filter { !$0.hasPrefix("ffmpeg.") } == ["video.mp4", "video.m4a", "video.gif"])
     }
 
     @Test func mp4ToMOVIsAValidMovieAndKeepsTheOriginal() async throws {

@@ -35,9 +35,10 @@ enum Video {
     /// Container type matching the source, for exports that keep the format.
     static func sameContainer(_ item: FileItem) -> AVFileType { item.conforms(to: .quickTimeMovie) ? .mov : .mp4 }
 
-    /// Exports `asset` to `url`, preferring `preset` and falling back to `fallback` when it is not compatible.
+    /// Exports `asset` to `url`, preferring `preset` and falling back to `fallback` when it is not compatible;
+    /// `configure` sets the time range, video composition or pitch algorithm.
     static func export(_ asset: AVAsset, name: String, preset: String, fallback: String? = nil, as type: AVFileType,
-                       to url: URL, progress: Progress) async throws {
+                       to url: URL, progress: Progress, configure: (AVAssetExportSession) -> Void = { _ in }) async throws {
         var chosen = preset
         if !(await AVAssetExportSession.compatibility(ofExportPreset: preset, with: asset, outputFileType: type)), let fallback {
             chosen = fallback
@@ -45,6 +46,7 @@ enum Video {
         guard let session = AVAssetExportSession(asset: asset, presetName: chosen) else {
             throw Failure.exportFailed(name, "this file cannot be exported (unsupported codec or damaged file).")
         }
+        configure(session)
         let states = session.states(updateInterval: 0.1) // Sendable, unlike the session itself
         let watcher = Task {
             for await state in states {

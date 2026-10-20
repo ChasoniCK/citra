@@ -224,21 +224,10 @@ enum ResizeDialog {
         ("Longest side 2560 px", .longestSide(2560)), ("Longest side 1920 px", .longestSide(1920)),
         ("Longest side 1280 px", .longestSide(1280)), ("Longest side 800 px", .longestSide(800)),
     ]
-    private static let lastChoiceKey = "ResizePresetIndex"
 
     static func ask() -> ResizePreset? {
-        NSApp.activate()
-        let alert = NSAlert()
-        alert.messageText = "Resize"
-        alert.informativeText = "Size of the resized copy. The original is not changed."
-        let popup = NSPopUpButton(frame: NSRect(x: 0, y: 0, width: 240, height: 26), pullsDown: false)
-        popup.addItems(withTitles: presets.map(\.0))
-        popup.selectItem(at: min(UserDefaults.standard.integer(forKey: lastChoiceKey), presets.count - 1))
-        alert.accessoryView = popup
-        alert.addButton(withTitle: "Resize")
-        alert.addButton(withTitle: "Cancel")
-        guard alert.runModal() == .alertFirstButtonReturn else { return nil }
-        UserDefaults.standard.set(popup.indexOfSelectedItem, forKey: lastChoiceKey)
-        return presets[popup.indexOfSelectedItem].1
+        PresetDialog.choose(title: "Resize", message: "Size of the resized copy. The original is not changed.",
+                            options: presets.map(\.0), confirm: "Resize", rememberAs: "ResizePresetIndex")
+            .map { presets[$0].1 }
     }
 }

@@ -33,11 +33,11 @@ enum Registry {
         switch mode {
         case .conversion:
             ImageConverter.all + [ImageToPDF(), RepackArchive(gzip: false), RepackArchive(gzip: true),
-                                  VideoRewrap.mov, VideoRewrap.mp4, VideoToM4A()]
+                                  VideoRewrap.mov, VideoRewrap.mp4, VideoToM4A(), VideoToGIF()]
                 + FFmpegFormat.all.map(FFmpegConverter.init)
         case .tools:
             [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata(), ExtractArchive(), TestArchive(),
-             VideoSnapshot(), MuteVideo()]
+             CompressVideo(), MuteVideo(), TrimVideo(), CropVideo(), ChangeSpeed(), VideoSnapshot(), MergePDFs(), SplitPDF()]
         case .fileActions: [AirDropAction(), FloatAction(), CopyFilesAction(), MoveAction(), CopyPathAction(), OpenInTerminal()]
         }
     }
