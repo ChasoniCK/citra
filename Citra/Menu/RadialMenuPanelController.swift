@@ -18,7 +18,7 @@ final class RadialMenuPanelController {
     private var acceptsDrops = false
 
     init() {
-        let side = RadialMenuModel.panelSide
+        let side = RingPanel.initialSide
         let container = NSView(frame: CGRect(x: 0, y: 0, width: side, height: side))
         let hosting = NSHostingView(rootView: RadialMenuView(model: model))
         for view in [hosting, dropView] as [NSView] {
@@ -36,14 +36,23 @@ final class RadialMenuPanelController {
         model.hovered = nil
         model.idleCenterText = idleCenterText
         acceptsDrops = true
-        guard !isShown else { return }
+        let size = CGSize(width: model.panelSide, height: model.panelSide)
+        if isShown {
+            // Same window; only grows or shrinks around its center when the overflow arc comes or goes.
+            if panel.frame.size != size {
+                place(centeredAt: CGPoint(x: panel.frame.midX, y: panel.frame.midY), size: size)
+            }
+            return
+        }
         isShown = true
-
-        let mouse = NSEvent.mouseLocation
-        let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
-        let visible = screen?.visibleFrame ?? panel.frame
-        panel.setFrame(PanelPlacement.frame(centeredAt: mouse, size: panel.frame.size, in: visible), display: false)
+        place(centeredAt: NSEvent.mouseLocation, size: size)
         panel.orderFrontRegardless()
+    }
+
+    private func place(centeredAt point: CGPoint, size: CGSize) {
+        let screen = NSScreen.screens.first { NSMouseInRect(point, $0.frame, false) } ?? NSScreen.main
+        let visible = screen?.visibleFrame ?? panel.frame
+        panel.setFrame(PanelPlacement.frame(centeredAt: point, size: size, in: visible), display: true)
     }
 
     /// The modifier was released or the drag was cancelled: hide and refuse any drop still routed here.
@@ -69,9 +78,9 @@ final class RadialMenuPanelController {
 
     func dragMoved(_ info: NSDraggingInfo) -> NSDragOperation {
         guard acceptsDrops else { return [] }
-        let index = hitTest(info)
-        if model.hovered != index { model.hovered = index }
-        return index == nil ? [] : DropOperation.choose(from: info.draggingSourceOperationMask)
+        let target = target(of: info)
+        if model.hovered != target { model.hovered = target }
+        return target.flatMap(model.item(for:)) == nil ? [] : DropOperation.choose(from: info.draggingSourceOperationMask)
     }
 
     func dragExited() {
@@ -79,8 +88,7 @@ final class RadialMenuPanelController {
     }
 
     func performDrop(_ info: NSDraggingInfo) -> Bool {
-        guard acceptsDrops, let index = hitTest(info) else { return false }
-        let item = model.items[index]
+        guard acceptsDrops, let target = target(of: info), let item = model.item(for: target) else { return false }
         let urls = info.draggingPasteboard.readObjects(forClasses: [NSURL.self],
                                                        options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
         PocLog.write("drop on \(item.title): \(urls.count) item(s)")
@@ -88,15 +96,17 @@ final class RadialMenuPanelController {
         return true
     }
 
-    private func hitTest(_ info: NSDraggingInfo) -> Int? {
+    private func target(of info: NSDraggingInfo) -> RingTarget? {
         let p = dropView.convert(info.draggingLocation, from: nil)
-        return model.layout.hitTest(CGPoint(x: p.x - dropView.bounds.midX, y: p.y - dropView.bounds.midY))
+        return model.target(at: CGPoint(x: p.x - dropView.bounds.midX, y: p.y - dropView.bounds.midY))
     }
 }
 
 private final class RingPanel: NSPanel {
+    static let initialSide = 2 * (RingMetrics.disc + RingMetrics.margin)
+
     init() {
-        let side = RadialMenuModel.panelSide
+        let side = Self.initialSide
         super.init(contentRect: CGRect(x: 0, y: 0, width: side, height: side),
                    styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: true)
         isOpaque = false

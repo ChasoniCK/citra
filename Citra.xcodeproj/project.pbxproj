@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04869F9D13C31BB652E6C855 /* RadialMenuModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB961AEEAE8A283AD134876 /* RadialMenuModelTests.swift */; };
 		0EC09BEE13A6B0372FB30284 /* MenuMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB1B3C23DDBA6BBAFE8FDF2 /* MenuMode.swift */; };
+		14599FCEDE950DC9A9DCFC31 /* OverflowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58031D99C1876AAC44B84FEB /* OverflowLayout.swift */; };
 		16515402B2E008585EF4961C /* FileNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919A28B349D3083FE0817301 /* FileNaming.swift */; };
 		1848E9C589F4CABE269EB1F4 /* MenuModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114BF72D4578A43449A429F /* MenuModeTests.swift */; };
 		210DEB3910536E8CB7324F3B /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */; };
@@ -26,6 +28,7 @@
 		D9EB154BC091D67A8A0BFFC0 /* ImageConversionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B94A316CD15379F967CBFF /* ImageConversionTests.swift */; };
 		E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */; };
 		F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */; };
+		FD823559CE7D94087FD36C29 /* RadialMenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB88BC382160C69197801B0 /* RadialMenuModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +49,7 @@
 		33F67CF9A0485DFDDA295E8D /* PocLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PocLog.swift; sourceTree = "<group>"; };
 		4114BF72D4578A43449A429F /* MenuModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuModeTests.swift; sourceTree = "<group>"; };
 		57275E0E1AF873E59B60F70C /* CitraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CitraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		58031D99C1876AAC44B84FEB /* OverflowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverflowLayout.swift; sourceTree = "<group>"; };
 		595691CF8D6B4A7AEE53BAD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6DB1B3C23DDBA6BBAFE8FDF2 /* MenuMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuMode.swift; sourceTree = "<group>"; };
 		7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -54,10 +58,12 @@
 		982DE7C9B3D00825A9E8FA03 /* DropOperationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperationTests.swift; sourceTree = "<group>"; };
 		9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuView.swift; sourceTree = "<group>"; };
 		9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialLayoutTests.swift; sourceTree = "<group>"; };
+		9FB88BC382160C69197801B0 /* RadialMenuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuModel.swift; sourceTree = "<group>"; };
 		B505454B8EA3488C8E116253 /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
 		B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacementTests.swift; sourceTree = "<group>"; };
 		D68D90EF3835C5598043FE6D /* PanelPlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelPlacement.swift; sourceTree = "<group>"; };
 		DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropOperation.swift; sourceTree = "<group>"; };
+		DDB961AEEAE8A283AD134876 /* RadialMenuModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuModelTests.swift; sourceTree = "<group>"; };
 		E1F871887DE1A5C1DC654A66 /* ImageConversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageConversion.swift; sourceTree = "<group>"; };
 		E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelController.swift; sourceTree = "<group>"; };
 		F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadialMenuPanelTests.swift; sourceTree = "<group>"; };
@@ -134,8 +140,10 @@
 			isa = PBXGroup;
 			children = (
 				DC91FC9D19021CC1FD0FF1E7 /* DropOperation.swift */,
+				58031D99C1876AAC44B84FEB /* OverflowLayout.swift */,
 				D68D90EF3835C5598043FE6D /* PanelPlacement.swift */,
 				3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */,
+				9FB88BC382160C69197801B0 /* RadialMenuModel.swift */,
 				E4E4C5284C2F06F54708C12E /* RadialMenuPanelController.swift */,
 				9A160E3E45FAB06A74ACF169 /* RadialMenuView.swift */,
 			);
@@ -151,6 +159,7 @@
 				4114BF72D4578A43449A429F /* MenuModeTests.swift */,
 				B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */,
 				9ECA1579391EF4E54CA5F60D /* RadialLayoutTests.swift */,
+				DDB961AEEAE8A283AD134876 /* RadialMenuModelTests.swift */,
 				F5DAF3C3052D1C18ED9F3F35 /* RadialMenuPanelTests.swift */,
 			);
 			path = CitraTests;
@@ -242,6 +251,7 @@
 				1848E9C589F4CABE269EB1F4 /* MenuModeTests.swift in Sources */,
 				F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */,
 				A3EEF9578F5FD42AD78E4DED /* RadialLayoutTests.swift in Sources */,
+				04869F9D13C31BB652E6C855 /* RadialMenuModelTests.swift in Sources */,
 				E302751662669EE0BAF12A9E /* RadialMenuPanelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,9 +267,11 @@
 				16515402B2E008585EF4961C /* FileNaming.swift in Sources */,
 				AAAEBB544326A5BD0F847A94 /* ImageConversion.swift in Sources */,
 				0EC09BEE13A6B0372FB30284 /* MenuMode.swift in Sources */,
+				14599FCEDE950DC9A9DCFC31 /* OverflowLayout.swift in Sources */,
 				979753AC436CCD97BC67F9B8 /* PanelPlacement.swift in Sources */,
 				D29982F7E0E79A7D0F092DCC /* PocLog.swift in Sources */,
 				73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */,
+				FD823559CE7D94087FD36C29 /* RadialMenuModel.swift in Sources */,
 				B9D7F5F1832DE86F5BCA280B /* RadialMenuPanelController.swift in Sources */,
 				641B1466E51123B81AE7D12E /* RadialMenuView.swift in Sources */,
 			);

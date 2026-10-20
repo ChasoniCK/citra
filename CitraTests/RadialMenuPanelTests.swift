@@ -36,8 +36,11 @@ private final class FakeDrag: NSObject, @MainActor NSDraggingInfo {
 struct RadialMenuPanelTests {
     let items = (0..<4).map { RadialMenuItem(id: "\($0)", title: "\($0)") }
     let file = URL(filePath: "/tmp/citra-drop.png")
-    /// Window point 90 pt above the ring center: inside sector 0.
-    var overSector0: NSPoint { NSPoint(x: RadialMenuModel.panelSide / 2, y: RadialMenuModel.panelSide / 2 + 90) }
+    /// Window point 90 pt above the ring center: inside sector 0 (4 items, no overflow arc).
+    var overSector0: NSPoint {
+        let side = 2 * (RingMetrics.disc + RingMetrics.margin)
+        return NSPoint(x: side / 2, y: side / 2 + 90)
+    }
 
     @Test func shownRingAcceptsDropOnSector() {
         let panel = RadialMenuPanelController()
@@ -98,6 +101,32 @@ struct RadialMenuPanelTests {
         panel.hide()
         panel.panel.makeKeyAndOrderFront(nil)
         #expect(!panel.panel.isVisible)
+        panel.endSession()
+    }
+
+    /// Window point at `degrees` clockwise from 12 o'clock and `r` from the ring center.
+    func point(in panel: RadialMenuPanelController, _ degrees: Double, _ r: Double) -> NSPoint {
+        let a = degrees * .pi / 180, c = panel.model.panelSide / 2
+        return NSPoint(x: c + r * sin(a), y: c + r * cos(a))
+    }
+
+    @Test func dropOnMoreIsRefusedButOverflowItemIsAccepted() {
+        let panel = RadialMenuPanelController()
+        var dropped: [String] = []
+        panel.onDrop = { item, _ in dropped.append(item.id) }
+        let twelve = (0..<12).map { RadialMenuItem(id: "\($0)", title: "\($0)") }
+        panel.show(twelve, idleCenterText: "")
+        #expect(panel.panel.frame.width == panel.model.panelSide)
+
+        let moreAngle = panel.model.layout.centerAngle(of: 9) * 180 / .pi
+        let overMore = FakeDrag(at: point(in: panel, moreAngle, 91.5), file: file)
+        #expect(panel.dragMoved(overMore) == [])
+        #expect(!panel.performDrop(overMore))
+
+        let overArc = FakeDrag(at: point(in: panel, moreAngle, 171), file: file)
+        #expect(panel.dragMoved(overArc) == .copy)
+        #expect(panel.performDrop(overArc))
+        #expect(dropped == ["10"])
         panel.endSession()
     }
 }

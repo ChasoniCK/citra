@@ -1,31 +1,5 @@
 import SwiftUI
 
-struct RadialMenuItem: Identifiable, Equatable {
-    let id: String
-    let title: String
-    var symbol: String?
-    /// PoC only: shown to exercise the layout, does nothing on drop.
-    var isPlaceholder = false
-}
-
-@MainActor @Observable
-final class RadialMenuModel {
-    var items: [RadialMenuItem] = []
-    var hovered: Int?
-    var idleCenterText = ""
-
-    static let outerRadius: CGFloat = 130
-    /// Visible backdrop; the panel corners outside it are fully transparent.
-    static let discRadius: CGFloat = outerRadius + 8
-    static let panelSide: CGFloat = (outerRadius + 14) * 2
-
-    var layout: RadialLayout {
-        RadialLayout(count: items.count, innerRadius: 50, outerRadius: Self.outerRadius, gap: 6)
-    }
-
-    var centerText: String { hovered.map { items[$0].title } ?? idleCenterText }
-}
-
 /// PoC rendering: plain ring, highlight under the cursor. Styling is Stage 2.
 struct RadialMenuView: View {
     let model: RadialMenuModel
@@ -36,10 +10,10 @@ struct RadialMenuView: View {
             Circle()
                 .fill(.black.opacity(0.78))
                 .overlay(Circle().strokeBorder(.white.opacity(0.15)))
-                .frame(width: RadialMenuModel.discRadius * 2, height: RadialMenuModel.discRadius * 2)
+                .frame(width: RingMetrics.disc * 2, height: RingMetrics.disc * 2)
 
-            ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
-                let hovered = model.hovered == index
+            ForEach(Array(model.primaryItems.enumerated()), id: \.element.id) { index, item in
+                let hovered = model.hovered == .primary(index)
                 SectorShape(layout: layout, index: index)
                     .fill(hovered ? Color.orange : .white.opacity(item.isPlaceholder ? 0.06 : 0.16))
                     .scaleEffect(hovered ? 1.04 : 1)
@@ -60,7 +34,7 @@ struct RadialMenuView: View {
                 .multilineTextAlignment(.center)
         }
         .animation(.easeOut(duration: 0.12), value: model.hovered)
-        .frame(width: RadialMenuModel.panelSide, height: RadialMenuModel.panelSide)
+        .frame(width: model.panelSide, height: model.panelSide)
     }
 }
 

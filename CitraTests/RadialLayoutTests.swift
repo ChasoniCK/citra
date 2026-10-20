@@ -86,4 +86,75 @@ struct RadialLayoutTests {
         #expect(p.contains(polar(90, 85)))
         #expect(!p.contains(polar(180, 85)))
     }
+
+    // MARK: Rounded corners (Stage 2 reference geometry)
+
+    func rounded(_ n: Int) -> RadialLayout {
+        RadialLayout(count: n, innerRadius: 53.5, outerRadius: 129.5, gap: 5, outerCornerRadius: 14, innerCornerRadius: 8)
+    }
+
+    /// Point `along` the end-boundary ray of sector 0 (n = 6, boundary at 30°), `off` pt into the sector.
+    func nearEndSeam(along: Double, off: Double) -> CGPoint {
+        let b = 30.0 * .pi / 180
+        return CGPoint(x: along * sin(b) - off * cos(b), y: along * cos(b) + off * sin(b))
+    }
+
+    @Test func roundingCutsTheSharpOuterCorner() {
+        let sharp = RadialLayout(count: 6, innerRadius: 53.5, outerRadius: 129.5, gap: 5)
+        let p = nearEndSeam(along: 127, off: 3.5)
+        #expect(sharp.sectorPath(0).contains(p))
+        #expect(!rounded(6).sectorPath(0).contains(p))
+    }
+
+    @Test func roundingCutsTheSharpInnerCorner() {
+        let sharp = RadialLayout(count: 6, innerRadius: 53.5, outerRadius: 129.5, gap: 5)
+        let p = nearEndSeam(along: 55, off: 3.5)
+        #expect(sharp.sectorPath(0).contains(p))
+        #expect(!rounded(6).sectorPath(0).contains(p))
+    }
+
+    @Test func roundedSectorKeepsItsBodyAndStaysInsideTheRing() {
+        let l = rounded(6)
+        for i in 0..<6 {
+            let path = l.sectorPath(i)
+            #expect(path.contains(polar(Double(i) * 60, 91.5)))
+            #expect(path.contains(polar(Double(i) * 60, 127)))
+            let box = path.boundingBoxOfPath
+            #expect(max(abs(box.minX), abs(box.maxX), abs(box.minY), abs(box.maxY)) <= 129.5 + 0.01)
+        }
+    }
+
+    @Test func roundedSingleSectorKeepsBottomSeam() {
+        let p = rounded(1).sectorPath(0)
+        #expect(p.contains(polar(0, 91.5)))
+        #expect(p.contains(polar(90, 91.5)))
+        #expect(p.contains(polar(270, 91.5)))
+        #expect(!p.contains(polar(180, 91.5)))
+    }
+
+    @Test func roundedTwoSectorsSplitAtHorizontalSeams() {
+        let l = rounded(2)
+        #expect(l.sectorPath(0).contains(polar(0, 91.5)))
+        #expect(l.sectorPath(1).contains(polar(180, 91.5)))
+        #expect(!l.sectorPath(0).contains(polar(90, 91.5)))
+        #expect(!l.sectorPath(1).contains(polar(270, 91.5)))
+    }
+
+    /// With 10 sectors the inner arc is short; corners must shrink instead of inverting the arc.
+    @Test func crowdedRingClampsCornersWithoutBreakingPaths() {
+        let l = RadialLayout(count: 10, innerRadius: 53.5, outerRadius: 129.5, gap: 5,
+                             outerCornerRadius: 40, innerCornerRadius: 30)
+        for i in 0..<10 {
+            let path = l.sectorPath(i)
+            let box = path.boundingBoxOfPath
+            #expect(!box.isNull && box.width.isFinite && box.height.isFinite)
+            #expect(path.contains(polar(Double(i) * 36, 91.5)))
+            #expect(!path.contains(polar(Double(i) * 36 + 18, 91.5)))
+        }
+    }
+
+    @Test func labelWidthIsTheChordAtMidRadiusMinusPadding() {
+        #expect(abs(rounded(6).labelWidth - (2 * 91.5 * sin(Double.pi / 6) - 5 - 16)) < 1e-9)
+        #expect(abs(rounded(1).labelWidth - (2 * 91.5 - 5 - 16)) < 1e-9)
+    }
 }
