@@ -31,7 +31,7 @@ extension FileAction {
 enum Registry {
     static func all(for mode: MenuMode) -> [any FileAction] {
         switch mode {
-        case .conversion: ImageConverter.all + [ImageToPDF()]
+        case .conversion: ImageConverter.all + [ImageToPDF(), RepackArchive(gzip: false), RepackArchive(gzip: true)]
         case .tools: [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata(), ExtractArchive(), TestArchive()]
         case .fileActions: [CopyFilesAction(), CopyPathAction()]
         }
