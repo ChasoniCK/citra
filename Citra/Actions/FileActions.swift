@@ -8,12 +8,12 @@ struct CopyFilesAction: FileAction {
 
     func isApplicable(to items: [FileItem]) -> Bool { true }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         await MainActor.run {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.writeObjects(items.map { $0.url as NSURL })
         }
-        return []
+        return ActionResult()
     }
 }
 
@@ -25,11 +25,11 @@ struct CopyPathAction: FileAction {
 
     func isApplicable(to items: [FileItem]) -> Bool { true }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         await MainActor.run {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(items.map(\.url.path).joined(separator: "\n"), forType: .string)
         }
-        return []
+        return ActionResult()
     }
 }

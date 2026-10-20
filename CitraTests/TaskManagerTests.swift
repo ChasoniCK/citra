@@ -6,13 +6,13 @@ private struct WriteFile: FileAction {
     let id = "write"
     let title = "Write"
     func isApplicable(to items: [FileItem]) -> Bool { true }
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         let dir = items[0].url.deletingLastPathComponent()
         let out = try await OutputWriter.write(into: dir, baseName: "result", pathExtension: "txt") { temp in
             try Data("ok".utf8).write(to: temp)
         }
         progress.completedUnitCount = progress.totalUnitCount
-        return [out]
+        return ActionResult(files: [out])
     }
 }
 
@@ -21,19 +21,19 @@ private struct Fail: FileAction {
     let id = "fail"
     let title = "Fail"
     func isApplicable(to items: [FileItem]) -> Bool { true }
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] { throw Broken() }
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult { throw Broken() }
 }
 
 private struct Slow: FileAction {
     let id = "slow"
     let title = "Slow"
     func isApplicable(to items: [FileItem]) -> Bool { true }
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         let dir = items[0].url.deletingLastPathComponent()
-        return [try await OutputWriter.write(into: dir, baseName: "slow", pathExtension: "txt") { temp in
+        return ActionResult(files: [try await OutputWriter.write(into: dir, baseName: "slow", pathExtension: "txt") { temp in
             try Data("partial".utf8).write(to: temp)
             try await Task.sleep(for: .seconds(10))
-        }]
+        }])
     }
 }
 
@@ -44,9 +44,9 @@ private struct Probe: FileAction {
     let title = "Probe"
     let probe: MainThreadProbe
     func isApplicable(to items: [FileItem]) -> Bool { true }
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         probe.ranOnMain = pthread_main_np() != 0
-        return []
+        return ActionResult()
     }
 }
 
@@ -58,7 +58,7 @@ struct TaskManagerTests {
 
     func manager() -> (TaskManager, Box) {
         let box = Box()
-        let tm = TaskManager(onFinished: { box.finished.append(($0, $1)) }, onFailed: { box.failed.append(($0, $1.localizedDescription)) })
+        let tm = TaskManager(onFinished: { box.finished.append(($0, $1.files)) }, onFailed: { box.failed.append(($0, $1.localizedDescription)) })
         return (tm, box)
     }
 

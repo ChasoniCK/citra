@@ -5,7 +5,7 @@ import ApplicationServices
 @MainActor
 final class AppCoordinator {
     let notifier = Notifier()
-    lazy var tasks = TaskManager(onFinished: { [notifier] in notifier.finished($0, outputs: $1) },
+    lazy var tasks = TaskManager(onFinished: { [notifier] in notifier.finished($0, result: $1) },
                                  onFailed: { [notifier] in notifier.failed($0, error: $1) })
     private let monitor = DragMonitor()
     private let panel = RadialMenuPanelController()

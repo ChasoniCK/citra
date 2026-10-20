@@ -83,7 +83,7 @@ struct ImageConverter: FileAction {
 
     func centerText(for items: [FileItem]) -> String? { conversionText(items, to: title) }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         progress.totalUnitCount = Int64(items.count)
         var outputs: [URL] = []
         for item in items {
@@ -91,7 +91,7 @@ struct ImageConverter: FileAction {
             outputs.append(try await ImageCodec.convert(item.url, to: target, fileExtension: fileExtension))
             progress.completedUnitCount += 1
         }
-        return outputs
+        return ActionResult(files: outputs)
     }
 }
 
@@ -104,7 +104,7 @@ struct ImageToPDF: FileAction {
 
     func centerText(for items: [FileItem]) -> String? { conversionText(items, to: title) }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         progress.totalUnitCount = Int64(items.count)
         var outputs: [URL] = []
         for item in items {
@@ -126,7 +126,7 @@ struct ImageToPDF: FileAction {
             })
             progress.completedUnitCount += 1
         }
-        return outputs
+        return ActionResult(files: outputs)
     }
 }
 

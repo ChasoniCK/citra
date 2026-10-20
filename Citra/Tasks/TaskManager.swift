@@ -13,10 +13,10 @@ final class TaskManager {
 
     private(set) var jobs: [Job] = []
     @ObservationIgnored private var tasks: [UUID: Task<Void, Never>] = [:]
-    @ObservationIgnored private let onFinished: (String, [URL]) -> Void
+    @ObservationIgnored private let onFinished: (String, ActionResult) -> Void
     @ObservationIgnored private let onFailed: (String, Error) -> Void
 
-    init(onFinished: @escaping (String, [URL]) -> Void, onFailed: @escaping (String, Error) -> Void) {
+    init(onFinished: @escaping (String, ActionResult) -> Void, onFailed: @escaping (String, Error) -> Void) {
         self.onFinished = onFinished
         self.onFailed = onFailed
     }
@@ -28,8 +28,8 @@ final class TaskManager {
         jobs.append(job)
         let task = Task {
             do {
-                let outputs = try await Self.perform(action, items, job.progress)
-                onFinished(job.title, outputs)
+                let result = try await Self.perform(action, items, job.progress)
+                onFinished(job.title, result)
             } catch is CancellationError {
                 // Cancelled by the user: nothing to report.
             } catch {
@@ -49,9 +49,9 @@ final class TaskManager {
 
     /// `@concurrent`: the work never runs on the main actor, whatever the caller's isolation.
     @concurrent
-    private nonisolated static func perform(_ action: any FileAction, _ items: [FileItem], _ progress: Progress) async throws -> [URL] {
-        let outputs = try await action.perform(items: items, progress: progress)
+    private nonisolated static func perform(_ action: any FileAction, _ items: [FileItem], _ progress: Progress) async throws -> ActionResult {
+        let result = try await action.perform(items: items, progress: progress)
         try Task.checkCancellation()
-        return outputs
+        return result
     }
 }

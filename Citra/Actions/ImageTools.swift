@@ -72,7 +72,7 @@ enum ImageTools {
     }
 
     /// Runs `body` per item with progress and cancellation checks.
-    static func each(_ items: [FileItem], _ progress: Progress, _ body: (FileItem) async throws -> URL) async throws -> [URL] {
+    static func each(_ items: [FileItem], _ progress: Progress, _ body: (FileItem) async throws -> URL) async throws -> ActionResult {
         progress.totalUnitCount = Int64(items.count)
         var outputs: [URL] = []
         for item in items {
@@ -80,7 +80,7 @@ enum ImageTools {
             outputs.append(try await body(item))
             progress.completedUnitCount += 1
         }
-        return outputs
+        return ActionResult(files: outputs)
     }
 }
 
@@ -99,7 +99,7 @@ struct ResizeImage: FileAction {
     func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy(ImageTools.isEditable) }
     func centerText(for items: [FileItem]) -> String? { "Resize…" }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         guard let preset = await choose() else { throw CancellationError() }
         return try await ImageTools.each(items, progress) { item in
             let src = try ImageCodec.source(item.url)
@@ -124,7 +124,7 @@ struct RotateImage: FileAction {
     func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy(ImageTools.isEditable) }
     func centerText(for items: [FileItem]) -> String? { "Rotate 90° right" }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await ImageTools.each(items, progress) { item in
             let src = try ImageCodec.source(item.url)
             guard let rotated = ImageTools.rotatedClockwise(try ImageTools.upright(src, url: item.url))
@@ -146,7 +146,7 @@ struct CompressImage: FileAction {
 
     func centerText(for items: [FileItem]) -> String? { "Compress (quality 60 %)" }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         var notSmaller: URL?
         let outputs = try await ImageTools.each(items, progress) { item in
             let out = try await ImageCodec.convert(item.url, to: item.type, fileExtension: item.url.pathExtension,
@@ -159,9 +159,9 @@ struct CompressImage: FileAction {
                 return out
             }
             return out
-        }.filter { FileManager.default.fileExists(atPath: $0.path) }
+        }.files.filter { FileManager.default.fileExists(atPath: $0.path) }
         if outputs.isEmpty, let url = notSmaller { throw ImageTools.Failure.notSmaller(url) }
-        return outputs
+        return ActionResult(files: outputs)
     }
 }
 
@@ -175,7 +175,7 @@ struct RemoveImageMetadata: FileAction {
     func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy(ImageTools.isEditable) }
     func centerText(for items: [FileItem]) -> String? { "Remove metadata" }
 
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL] {
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         try await ImageTools.each(items, progress) { item in
             let src = try ImageCodec.source(item.url)
             let type = CGImageSourceGetType(src) ?? item.type.identifier as CFString

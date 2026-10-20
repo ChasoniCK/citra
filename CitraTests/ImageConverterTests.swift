@@ -63,7 +63,7 @@ struct ImageConverterTests {
         let png = try folder.image("img.png")
         let before = try Data(contentsOf: png)
         let progress = Progress(totalUnitCount: 1)
-        let out = try await action("image.jpeg").perform(items: [item(png)], progress: progress)
+        let out = try await action("image.jpeg").perform(items: [item(png)], progress: progress).files
         #expect(out.map(\.lastPathComponent) == ["img.jpg"])
         #expect(typeOf(out[0]) == UTType.jpeg.identifier)
         #expect(try Data(contentsOf: png) == before)
@@ -74,18 +74,18 @@ struct ImageConverterTests {
 
     @Test(arguments: [("image.heic", UTType.heic, "img.heic"), ("image.tiff", .tiff, "img.tiff")])
     func pngToOtherEncoders(_ c: (String, UTType, String)) async throws {
-        let out = try await action(c.0).perform(items: [item(try folder.image("img.png"))], progress: Progress())
+        let out = try await action(c.0).perform(items: [item(try folder.image("img.png"))], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == [c.2])
         #expect(typeOf(out[0]) == c.1.identifier)
     }
 
     @Test func jpegToPNG() async throws {
-        let out = try await action("image.png").perform(items: [item(try folder.image("img.jpg", type: .jpeg))], progress: Progress())
+        let out = try await action("image.png").perform(items: [item(try folder.image("img.jpg", type: .jpeg))], progress: Progress()).files
         #expect(typeOf(out[0]) == UTType.png.identifier)
     }
 
     @Test func imageToPDFHasOnePageOfTheImageSize() async throws {
-        let out = try await action("image.pdf").perform(items: [item(try folder.image("img.png"))], progress: Progress())
+        let out = try await action("image.pdf").perform(items: [item(try folder.image("img.png"))], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["img.pdf"])
         let doc = try #require(CGPDFDocument(out[0] as CFURL))
         #expect(doc.numberOfPages == 1)
@@ -96,14 +96,14 @@ struct ImageConverterTests {
     @Test func everyItemIsConvertedAndNamesNeverCollide() async throws {
         let a = try folder.image("a.png"), b = try folder.image("b.png")
         _ = try folder.file("a.jpg", Data("taken".utf8))
-        let out = try await action("image.jpeg").perform(items: [item(a), item(b)], progress: Progress())
+        let out = try await action("image.jpeg").perform(items: [item(a), item(b)], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["a 2.jpg", "b.jpg"])
     }
 
     @Test func corruptImageIsAClearErrorAndLeavesNothing() async throws {
         let fake = try folder.file("fake.png", Data("not an image".utf8))
         await #expect(throws: ImageCodec.Failure.self) {
-            try await action("image.jpeg").perform(items: [FileItem(url: fake, type: .png)], progress: Progress())
+            try await action("image.jpeg").perform(items: [FileItem(url: fake, type: .png)], progress: Progress()).files
         }
         #expect(try folder.names() == ["fake.png"])
     }

@@ -47,7 +47,7 @@ struct ImageToolsTests {
         // 16×8: right half red. Clockwise: the right half becomes the bottom half of an 8×16 image.
         let png = try folder.image("wide.png", width: 16, height: 8)
         let before = try Data(contentsOf: png)
-        let out = try await tool("image.rotate").perform(items: [item(png)], progress: Progress())
+        let out = try await tool("image.rotate").perform(items: [item(png)], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["wide rotated.png"])
         #expect(try size(out[0]) == (8, 16))
         #expect(try red(at: 4, 14, of: out[0]) == 255)
@@ -58,7 +58,7 @@ struct ImageToolsTests {
     @Test func rotateBakesAnExistingOrientationFirst() async throws {
         // Orientation 6 = shown rotated 90° clockwise already; one more turn shows it upside down, upright pixels.
         let jpg = try folder.image("o.jpg", type: .jpeg, width: 16, height: 8, properties: [kCGImagePropertyOrientation: 6])
-        let out = try await tool("image.rotate").perform(items: [item(jpg)], progress: Progress())
+        let out = try await tool("image.rotate").perform(items: [item(jpg)], progress: Progress()).files
         #expect(try size(out[0]) == (16, 8))
         #expect((try props(out[0])[kCGImagePropertyOrientation] as? Int ?? 1) == 1)
     }
@@ -71,7 +71,7 @@ struct ImageToolsTests {
             kCGImagePropertyTIFFDictionary: [kCGImagePropertyTIFFMake: "Camera"],
         ])
         #expect(try props(jpg)[kCGImagePropertyGPSDictionary] != nil)
-        let out = try await tool("image.metadata").perform(items: [item(jpg)], progress: Progress())
+        let out = try await tool("image.metadata").perform(items: [item(jpg)], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["geo no metadata.jpg"])
         let p = try props(out[0])
         #expect(p[kCGImagePropertyGPSDictionary] == nil)
@@ -83,7 +83,7 @@ struct ImageToolsTests {
     @Test func compressMakesASmallerJPEG() async throws {
         let jpg = try folder.image("big.jpg", type: .jpeg, width: 256, height: 256,
                                    properties: [kCGImageDestinationLossyCompressionQuality: 1.0], noise: true)
-        let out = try await tool("image.compress").perform(items: [item(jpg)], progress: Progress())
+        let out = try await tool("image.compress").perform(items: [item(jpg)], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["big compressed.jpg"])
         let a = try #require(try jpg.resourceValues(forKeys: [.fileSizeKey]).fileSize)
         let b = try #require(try out[0].resourceValues(forKeys: [.fileSizeKey]).fileSize)
@@ -95,24 +95,24 @@ struct ImageToolsTests {
         let jpg = try folder.image("small.jpg", type: .jpeg, width: 256, height: 256,
                                    properties: [kCGImageDestinationLossyCompressionQuality: 0.1], noise: true)
         await #expect(throws: ImageTools.Failure.self) {
-            try await tool("image.compress").perform(items: [item(jpg)], progress: Progress())
+            try await tool("image.compress").perform(items: [item(jpg)], progress: Progress()).files
         }
         #expect(try folder.names() == ["small.jpg"])
     }
 
     @Test func resizeByPercentAndByLongestSide() async throws {
         let png = try folder.image("r.png", width: 64, height: 32)
-        let half = try await ResizeImage(choose: { .percent(50) }).perform(items: [item(png)], progress: Progress())
+        let half = try await ResizeImage(choose: { .percent(50) }).perform(items: [item(png)], progress: Progress()).files
         #expect(half.map(\.lastPathComponent) == ["r resized.png"])
         #expect(try size(half[0]) == (32, 16))
-        let side = try await ResizeImage(choose: { .longestSide(20) }).perform(items: [item(png)], progress: Progress())
+        let side = try await ResizeImage(choose: { .longestSide(20) }).perform(items: [item(png)], progress: Progress()).files
         #expect(try size(side[0]) == (20, 10))
     }
 
     @Test func cancelledResizeDialogDoesNothing() async throws {
         let png = try folder.image("r.png")
         await #expect(throws: CancellationError.self) {
-            try await ResizeImage(choose: { nil }).perform(items: [item(png)], progress: Progress())
+            try await ResizeImage(choose: { nil }).perform(items: [item(png)], progress: Progress()).files
         }
         #expect(try folder.names() == ["r.png"])
     }

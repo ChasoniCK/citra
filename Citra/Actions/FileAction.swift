@@ -11,8 +11,14 @@ protocol FileAction: Sendable {
     func isApplicable(to items: [FileItem]) -> Bool
     /// Center text while hovered, e.g. "PNG → JPEG"; the title when nil.
     func centerText(for items: [FileItem]) -> String?
-    /// Runs off the main thread; returns the files it created (for "Show in Finder").
-    func perform(items: [FileItem], progress: Progress) async throws -> [URL]
+    /// Runs off the main thread; returns the files it created (for "Show in Finder") and/or a message.
+    func perform(items: [FileItem], progress: Progress) async throws -> ActionResult
+}
+
+struct ActionResult: Sendable, Equatable {
+    var files: [URL] = []
+    /// Shown when there is something to say beyond the files, e.g. "OK — 12 files".
+    var message: String?
 }
 
 extension FileAction {

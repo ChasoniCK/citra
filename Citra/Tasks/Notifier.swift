@@ -15,15 +15,16 @@ final class Notifier: NSObject, UNUserNotificationCenterDelegate {
         center.setNotificationCategories([UNNotificationCategory(identifier: Self.category, actions: [show], intentIdentifiers: [])])
     }
 
-    func finished(_ title: String, outputs: [URL]) {
-        guard !outputs.isEmpty else { return }
+    func finished(_ title: String, result: ActionResult) {
+        let outputs = result.files
+        guard !outputs.isEmpty || result.message != nil else { return }
         Task {
             do {
                 guard try await center.requestAuthorization(options: [.alert, .sound]) else { return }
                 let content = UNMutableNotificationContent()
                 content.title = title
-                content.body = outputs.count == 1 ? outputs[0].lastPathComponent : "\(outputs.count) files"
-                content.categoryIdentifier = Self.category
+                content.body = result.message ?? (outputs.count == 1 ? outputs[0].lastPathComponent : "\(outputs.count) files")
+                if !outputs.isEmpty { content.categoryIdentifier = Self.category }
                 content.userInfo = ["paths": outputs.map(\.path)]
                 try await center.add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
             } catch {
