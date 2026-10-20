@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The colors around the glass, dark and light; the sectors and the pill are system glass.
 struct RingPalette: Equatable {
-    /// Under the sectors: near-invisible, but not alpha 0, so a drop between two sectors does not fall through.
+    /// Under the sectors; never alpha 0, or a drop between two sectors would fall through.
     var backing: Color
     var hole: Color
     var holeEdge: Color
@@ -18,8 +18,8 @@ struct RingPalette: Equatable {
 
     private static func base(_ scheme: ColorScheme) -> RingPalette {
         scheme == .dark
-            ? RingPalette(backing: .black.opacity(0.03), hole: .black.opacity(0.14), holeEdge: .white.opacity(0.08), label: .white.opacity(0.93))
-            : RingPalette(backing: .black.opacity(0.03), hole: .white.opacity(0.18), holeEdge: .black.opacity(0.06), label: .black.opacity(0.78))
+            ? RingPalette(backing: .black.opacity(0.22), hole: .black.opacity(0.14), holeEdge: .white.opacity(0.08), label: .white.opacity(0.93))
+            : RingPalette(backing: .black.opacity(0.08), hole: .white.opacity(0.18), holeEdge: .black.opacity(0.06), label: .black.opacity(0.78))
     }
 }
 
