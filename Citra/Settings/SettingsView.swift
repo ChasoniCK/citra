@@ -209,7 +209,8 @@ private struct ConversionSettings: View {
     /// Registered actions grouped by what they work on, with availability on this Mac.
     private var groups: [(String, String, Bool)] {
         let all = Registry.all(for: .conversion) + Registry.all(for: .tools)
-        return [("image.", "Images"), ("zip.", "ZIP archives"), ("video.", "Video"), ("pdf.", "PDF")].map { prefix, name in
+        return [("image.", "Images"), ("archive.", "Archives"), ("video.", "Video"), ("pdf.", "PDF"),
+                ("subtitles.", "Subtitles")].map { prefix, name in
             let actions = all.filter { $0.id.hasPrefix(prefix) }
             return (name, actions.map(\.title).joined(separator: ", "), actions.allSatisfy(\.isAvailable))
         }
@@ -220,6 +221,11 @@ private struct ConversionSettings: View {
             Section("Images") {
                 qualitySlider("JPEG quality", $jpeg)
                 qualitySlider("HEIC quality", $heic)
+                LabeledContent("WebP") {
+                    Text(WebPConverter.cwebp.map { "cwebp: \(($0.path as NSString).abbreviatingWithTildeInPath)" }
+                         ?? "Needs cwebp: `brew install webp`, then restart Citra")
+                        .foregroundStyle(WebPConverter.cwebp == nil ? Color.orange : Color.secondary)
+                }
             }
             Section("Video") {
                 Picker("MOV conversion", selection: $video) {
@@ -227,7 +233,7 @@ private struct ConversionSettings: View {
                     Text("Always re-encode").tag(VideoQuality.reencode)
                 }
             }
-            Section("FFmpeg (MKV, WebM, AVI, WMV, MP3)") {
+            Section("FFmpeg (video and audio formats)") {
                 if let ffmpeg = FFmpeg.current {
                     LabeledContent("Found") { Text((ffmpeg.ffmpeg.path as NSString).abbreviatingWithTildeInPath).foregroundStyle(.secondary) }
                     ForEach(FFmpegFormat.all, id: \.ext) { format in

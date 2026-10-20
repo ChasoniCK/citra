@@ -28,6 +28,7 @@
 		6F164C802B1A0711C9BC399D /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206EC586047089A49C1C757E /* AppSettings.swift */; };
 		717E2C44037906BE02B53213 /* DragMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90006D9E13444C860F65C897 /* DragMonitor.swift */; };
 		73C94931D9274F7D1A71071D /* RadialLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3312FA4B2AB1B03B737BB1C2 /* RadialLayout.swift */; };
+		80A7AB06942BF8DF82E6078D /* SubtitleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71378A88D13EE43595BA68D2 /* SubtitleTests.swift */; };
 		843A7DCDA634573F5A393B07 /* TestZip.swift in Sources */ = {isa = PBXBuildFile; fileRef = C699FA37872BB2B3DFFAC43D /* TestZip.swift */; };
 		8AC1064C90D7AA156FA1391C /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B505454B8EA3488C8E116253 /* FileNamingTests.swift */; };
 		8BA7462546A93800823D636D /* FileActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 635E56F3B35F81C57DEAE7D0 /* FileActionsTests.swift */; };
@@ -58,6 +59,7 @@
 		E6948E10AFC653E9A8296065 /* Stage5Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A08C070F7720EB6B6654C4 /* Stage5Tests.swift */; };
 		E96253FA27257AF5C42D96AE /* ZipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */; };
 		ECC08CBFA8247D8D706F04D0 /* RepackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2EA16542447DBADBC77580 /* RepackTests.swift */; };
+		F3584DE05BD6E30A6F3802B3 /* Subtitles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5BC2CA4F17EE472C8B254F /* Subtitles.swift */; };
 		F362ECB07C41263DA5D12D2A /* PanelPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89F5833C93C9396E421DFD3 /* PanelPlacementTests.swift */; };
 		F80DA1E2D43FC66444854229 /* TestFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10972251625DB0EFBD826B7F /* TestFiles.swift */; };
 		FD823559CE7D94087FD36C29 /* RadialMenuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FB88BC382160C69197801B0 /* RadialMenuModel.swift */; };
@@ -94,9 +96,11 @@
 		595691CF8D6B4A7AEE53BAD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		635E56F3B35F81C57DEAE7D0 /* FileActionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileActionsTests.swift; sourceTree = "<group>"; };
 		6DB1B3C23DDBA6BBAFE8FDF2 /* MenuMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuMode.swift; sourceTree = "<group>"; };
+		71378A88D13EE43595BA68D2 /* SubtitleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleTests.swift; sourceTree = "<group>"; };
 		72F03826EE621F99DC216F5B /* VideoTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTools.swift; sourceTree = "<group>"; };
 		7A5AA0ABD9325B93022F609B /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		7AD0A609BD9B5BD0A1A4A239 /* PDFActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFActions.swift; sourceTree = "<group>"; };
+		7C5BC2CA4F17EE472C8B254F /* Subtitles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subtitles.swift; sourceTree = "<group>"; };
 		7E3872C7E55936DC73A6819C /* VideoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTests.swift; sourceTree = "<group>"; };
 		7EB11B6207D6109A85BA31B4 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
 		8E5BF39C8C915070C01BA98F /* TestVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVideo.swift; sourceTree = "<group>"; };
@@ -165,6 +169,7 @@
 				411F8A230064763BE0FE450A /* OutputWriter.swift */,
 				7AD0A609BD9B5BD0A1A4A239 /* PDFActions.swift */,
 				E9E51D50ADAD92454C3F4184 /* Repack.swift */,
+				7C5BC2CA4F17EE472C8B254F /* Subtitles.swift */,
 				0BC7B15DAF066681674CAF14 /* VideoActions.swift */,
 				72F03826EE621F99DC216F5B /* VideoTools.swift */,
 				30128D5300DE1561E6708C46 /* Zip.swift */,
@@ -295,6 +300,7 @@
 				BAFF21C69453F1472C2B4BDE /* RingRenderTests.swift */,
 				095CC85DD2E032527DE9237B /* SettingsTests.swift */,
 				40A08C070F7720EB6B6654C4 /* Stage5Tests.swift */,
+				71378A88D13EE43595BA68D2 /* SubtitleTests.swift */,
 				A25D18BAAC8DDA2E1020236F /* TaskManagerTests.swift */,
 				7E3872C7E55936DC73A6819C /* VideoTests.swift */,
 				A497BD6B8DBA260F53B5D0B6 /* ZipTests.swift */,
@@ -408,6 +414,7 @@
 				E3B8D432D44650CA9E379989 /* RingRenderTests.swift in Sources */,
 				6E34B9EF5984A291DBC1B817 /* SettingsTests.swift in Sources */,
 				E6948E10AFC653E9A8296065 /* Stage5Tests.swift in Sources */,
+				80A7AB06942BF8DF82E6078D /* SubtitleTests.swift in Sources */,
 				0DB72418D3289BAA54FCC2D3 /* TaskManagerTests.swift in Sources */,
 				F80DA1E2D43FC66444854229 /* TestFiles.swift in Sources */,
 				D495141AA7E10AEF4E66ED01 /* TestVideo.swift in Sources */,
@@ -448,6 +455,7 @@
 				AD9EE0EE0AED925DDFE909EA /* Repack.swift in Sources */,
 				BC89D3236235246CB2B8D810 /* SettingsView.swift in Sources */,
 				67F52E284373C9432432B2BA /* Shelf.swift in Sources */,
+				F3584DE05BD6E30A6F3802B3 /* Subtitles.swift in Sources */,
 				00EC7CD40DF15ACCF4C6B206 /* TaskManager.swift in Sources */,
 				D06C88C8E7472A997A763C90 /* VideoActions.swift in Sources */,
 				0AAD1DB0CE4401FCFE41477C /* VideoTools.swift in Sources */,

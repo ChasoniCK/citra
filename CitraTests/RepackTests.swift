@@ -18,6 +18,28 @@ struct RepackTests {
         return FileTypeResolver.resolve(folder.url.appending(path: "Project.zip"))
     }
 
+    func run(_ tool: String, _ arguments: [String], in dir: URL) throws {
+        let p = Process()
+        p.executableURL = URL(filePath: tool)
+        p.arguments = arguments
+        p.currentDirectoryURL = dir
+        try p.run()
+        p.waitUntilExit()
+        guard p.terminationStatus == 0 else { throw CocoaError(.fileWriteUnknown) }
+    }
+
+    /// The same Project tree packed by /usr/bin/tar; `rename` rewrites entry names (`,^Project/,../,`).
+    func projectTar(_ name: String, gzip: Bool = false, rename: String? = nil) throws -> FileItem {
+        let src = folder.url.appending(path: "src", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: src.appending(path: "Project/docs"), withIntermediateDirectories: true)
+        try Data("hello".utf8).write(to: src.appending(path: "Project/docs/readme.txt"))
+        try run("/usr/bin/tar", ["-c"] + (gzip ? ["-z"] : []) + (rename.map { ["-s", $0] } ?? []) + ["-f", "../\(name)", "Project"], in: src)
+        try FileManager.default.removeItem(at: src)
+        return FileTypeResolver.resolve(folder.url.appending(path: name))
+    }
+
+    func tool(_ id: String) throws -> any FileAction { try #require(Registry.all(for: .tools).first { $0.id == id }) }
+
     func list(_ archive: URL, gzip: Bool) throws -> [String] {
         let p = Process(), out = Pipe()
         p.executableURL = URL(filePath: "/usr/bin/tar")
@@ -29,13 +51,57 @@ struct RepackTests {
             .split(separator: "\n").map(String.init).sorted()
     }
 
-    @Test func zipOffersTarAndTarGz() throws {
-        let ids = Registry.actions(for: .conversion, items: [try projectZip()]).map(\.id)
-        #expect(ids == ["zip.tar", "zip.targz"])
-        #expect(try action("zip.targz").centerText(for: [try projectZip()]) == "ZIP → TAR.GZ")
+    @Test func tarAndTarGzOfferTheOtherTwoAndExtract() throws {
+        for (name, gzip, expected) in [("P.tar", false, ["archive.zip", "archive.targz"]), ("P.tar.gz", true, ["archive.zip", "archive.tar"]),
+                                       ("P.tgz", true, ["archive.zip", "archive.tar"])] {
+            let archive = try projectTar(name, gzip: gzip)
+            #expect(Registry.actions(for: .conversion, items: [archive]).map(\.id) == expected)
+            #expect(Registry.actions(for: .tools, items: [archive]).map(\.id) == ["archive.extract"])
+        }
     }
 
-    @Test(arguments: [("zip.tar", false, "Project.tar"), ("zip.targz", true, "Project.tar.gz")])
+    @Test func tarGzToZipKeepsTheTreeAndDropsBothExtensions() async throws {
+        let out = try await action("archive.zip").perform(items: [try projectTar("Project.tar.gz", gzip: true)], progress: Progress()).files
+        #expect(out.map(\.lastPathComponent) == ["Project.zip"])
+        #expect(FileTypeResolver.resolve(out[0]).type == .zip)
+        #expect(try list(out[0], gzip: false).contains("Project/docs/readme.txt"))
+        #expect(try folder.names() == ["Project.tar.gz", "Project.zip"])
+    }
+
+    @Test func tarExtractsIntoItsSingleTopFolder() async throws {
+        let out = try await tool("archive.extract").perform(items: [try projectTar("Project.tar")], progress: Progress()).files
+        #expect(out.map(\.lastPathComponent) == ["Project"])
+        #expect(try String(contentsOf: out[0].appending(path: "docs/readme.txt"), encoding: .utf8) == "hello")
+    }
+
+    /// /usr/bin/tar refuses `..` entries; the whole operation fails and leaves nothing, inside or outside.
+    @Test(arguments: [("archive.extract", MenuMode.tools), ("archive.zip", .conversion)])
+    func tarWithDotDotIsRefusedAndLeavesNothing(_ c: (String, MenuMode)) async throws {
+        let bad = try projectTar("bad.tar", rename: ",^Project/,../,")
+        let action = try #require(Registry.all(for: c.1).first { $0.id == c.0 })
+        await #expect(throws: ProcessRunner.Failure.self) { try await action.perform(items: [bad], progress: Progress()) }
+        #expect(try folder.names() == ["bad.tar"])
+        #expect(!FileManager.default.fileExists(atPath: folder.url.deletingLastPathComponent().appending(path: "docs").path))
+    }
+
+    @Test func plainGzipExtractsToTheFileInside() async throws {
+        _ = try folder.file("log.txt", Data("line\n".utf8))
+        try run("/usr/bin/gzip", ["log.txt"], in: folder.url)
+        let gz = FileTypeResolver.resolve(folder.url.appending(path: "log.txt.gz"))
+        #expect(Registry.actions(for: .conversion, items: [gz]).isEmpty)
+        let out = try await tool("archive.extract").perform(items: [gz], progress: Progress()).files
+        #expect(out.map(\.lastPathComponent) == ["log.txt"])
+        #expect(try String(contentsOf: out[0], encoding: .utf8) == "line\n")
+        #expect(try folder.names() == ["log.txt", "log.txt.gz"])
+    }
+
+    @Test func zipOffersTarAndTarGz() throws {
+        let ids = Registry.actions(for: .conversion, items: [try projectZip()]).map(\.id)
+        #expect(ids == ["archive.tar", "archive.targz"])
+        #expect(try action("archive.targz").centerText(for: [try projectZip()]) == "ZIP → TAR.GZ")
+    }
+
+    @Test(arguments: [("archive.tar", false, "Project.tar"), ("archive.targz", true, "Project.tar.gz")])
     func repackKeepsTheTreeAndCleansUp(_ c: (String, Bool, String)) async throws {
         let zip = try projectZip()
         let out = try await action(c.0).perform(items: [zip], progress: Progress()).files
@@ -51,7 +117,7 @@ struct RepackTests {
     @Test func unsafeZipIsRefusedAndLeavesNothing() async throws {
         let bad = FileTypeResolver.resolve(try folder.file("bad.zip", TestZip.build([TestZip.file("../evil.txt")])))
         await #expect(throws: ZipExtractor.Failure.self) {
-            try await action("zip.tar").perform(items: [bad], progress: Progress())
+            try await action("archive.tar").perform(items: [bad], progress: Progress())
         }
         #expect(try folder.names() == ["bad.zip"])
     }

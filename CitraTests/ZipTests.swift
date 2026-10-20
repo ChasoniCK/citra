@@ -28,7 +28,7 @@ struct ZipTests {
 
     @Test func zipGetsExtractAndTest() throws {
         let ids = Registry.actions(for: .tools, items: [try zip("a.zip", [TestZip.file("a.txt")])]).map(\.id)
-        #expect(ids == ["zip.extract", "zip.test"])
+        #expect(ids == ["archive.extract", "archive.test"])
     }
 
     // MARK: Extract
@@ -36,7 +36,7 @@ struct ZipTests {
     @Test func realArchiveExtractsIntoItsSingleTopFolder() async throws {
         let archive = try realZip()
         let before = try Data(contentsOf: archive.url)
-        let out = try await tool("zip.extract").perform(items: [archive], progress: Progress()).files
+        let out = try await tool("archive.extract").perform(items: [archive], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["Project"]) // single top folder: no Project.zip → Project/Project nesting
         let root = out[0]
         #expect(try String(contentsOf: root.appending(path: "docs/readme.txt"), encoding: .utf8).hasPrefix("hello zip"))
@@ -49,14 +49,14 @@ struct ZipTests {
     }
 
     @Test func looseFilesExtractIntoAFolderNamedAfterTheArchive() async throws {
-        let out = try await tool("zip.extract").perform(items: [try zip("loose.zip", [TestZip.file("a.txt"), TestZip.file("b/c.txt")])],
+        let out = try await tool("archive.extract").perform(items: [try zip("loose.zip", [TestZip.file("a.txt"), TestZip.file("b/c.txt")])],
                                                          progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == ["loose"])
         #expect(FileManager.default.fileExists(atPath: out[0].appending(path: "b/c.txt").path))
     }
 
     @Test func macOSResourceForksAreSkipped() async throws {
-        let out = try await tool("zip.extract").perform(items: [try zip("r.zip", [TestZip.file("a.txt"), TestZip.file("__MACOSX/._a.txt")])],
+        let out = try await tool("archive.extract").perform(items: [try zip("r.zip", [TestZip.file("a.txt"), TestZip.file("__MACOSX/._a.txt")])],
                                                          progress: Progress()).files
         #expect(try FileManager.default.contentsOfDirectory(atPath: out[0].path) == ["a.txt"])
     }
@@ -67,7 +67,7 @@ struct ZipTests {
     func traversalNamesAbortWithoutWritingAnything(_ name: String) async throws {
         let archive = try zip("bad.zip", [TestZip.file("ok.txt"), TestZip.file(name)])
         await #expect(throws: ZipExtractor.Failure.self) {
-            try await tool("zip.extract").perform(items: [archive], progress: Progress())
+            try await tool("archive.extract").perform(items: [archive], progress: Progress())
         }
         #expect(try folder.names() == ["bad.zip"])
         #expect(!FileManager.default.fileExists(atPath: folder.url.deletingLastPathComponent().appending(path: "evil.txt").path))
@@ -77,7 +77,7 @@ struct ZipTests {
     func symlinksLeavingTheArchiveAbort(_ target: String) async throws {
         let archive = try zip("link.zip", [TestZip.symlink("link", to: target), TestZip.file("link/evil.txt")])
         await #expect(throws: ZipExtractor.Failure.self) {
-            try await tool("zip.extract").perform(items: [archive], progress: Progress())
+            try await tool("archive.extract").perform(items: [archive], progress: Progress())
         }
         #expect(try folder.names() == ["link.zip"])
         #expect(!FileManager.default.fileExists(atPath: "/tmp/evil.txt"))
@@ -88,13 +88,13 @@ struct ZipTests {
         let archive = try zip("nested.zip", [TestZip.Entry(name: "Top/", mode: 0o040755), TestZip.symlink("Top/link", to: "/tmp"),
                                              TestZip.file("Top/link/evil.txt")])
         await #expect(throws: ZipExtractor.Failure.self) {
-            try await tool("zip.extract").perform(items: [archive], progress: Progress())
+            try await tool("archive.extract").perform(items: [archive], progress: Progress())
         }
         #expect(try folder.names() == ["nested.zip"])
     }
 
     @Test func symlinkInsideTheArchiveIsKept() async throws {
-        let out = try await tool("zip.extract").perform(items: [try zip("in.zip", [TestZip.file("d/a.txt"), TestZip.symlink("d/b", to: "a.txt")])],
+        let out = try await tool("archive.extract").perform(items: [try zip("in.zip", [TestZip.file("d/a.txt"), TestZip.symlink("d/b", to: "a.txt")])],
                                                          progress: Progress()).files
         #expect(try FileManager.default.destinationOfSymbolicLink(atPath: out[0].appending(path: "b").path) == "a.txt")
     }
@@ -106,7 +106,7 @@ struct ZipTests {
         bad.badCRC = true
         let archive = try zip("crc.zip", [bad])
         await #expect(throws: ZipReader.Failure.self) {
-            try await tool("zip.extract").perform(items: [archive], progress: Progress())
+            try await tool("archive.extract").perform(items: [archive], progress: Progress())
         }
         #expect(try folder.names() == ["crc.zip"])
     }
@@ -114,21 +114,21 @@ struct ZipTests {
     @Test func encryptedArchiveIsAClearError() async throws {
         let archive = try zip("enc.zip", [TestZip.file("a.txt")], encrypted: true)
         await #expect(throws: ZipReader.Failure.self) {
-            try await tool("zip.extract").perform(items: [archive], progress: Progress())
+            try await tool("archive.extract").perform(items: [archive], progress: Progress())
         }
     }
 
     @Test func notAZipIsAClearError() async throws {
         let fake = FileItem(url: try folder.file("fake.zip", Data("nope".utf8)), type: .zip)
         await #expect(throws: ZipReader.Failure.self) {
-            try await tool("zip.extract").perform(items: [fake], progress: Progress())
+            try await tool("archive.extract").perform(items: [fake], progress: Progress())
         }
     }
 
     // MARK: Test integrity
 
     @Test func testIntegrityReportsOKWithFileCount() async throws {
-        let result = try await tool("zip.test").perform(items: [try realZip()], progress: Progress())
+        let result = try await tool("archive.test").perform(items: [try realZip()], progress: Progress())
         #expect(result.files.isEmpty)
         #expect(result.message == "Project.zip is OK — 3 files")
     }
@@ -137,7 +137,7 @@ struct ZipTests {
         var bad = TestZip.file("a.txt", "content")
         bad.badCRC = true
         await #expect(throws: ZipReader.Failure.self) {
-            try await tool("zip.test").perform(items: [try zip("crc.zip", [bad])], progress: Progress())
+            try await tool("archive.test").perform(items: [try zip("crc.zip", [bad])], progress: Progress())
         }
     }
 }

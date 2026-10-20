@@ -86,17 +86,78 @@ enum ProcessRunner {
     }
 }
 
-/// ZIP → TAR / TAR.GZ: a real repack. The ZIP goes through the same safe extraction into a hidden staging
-/// folder next to it, `/usr/bin/tar` packs that tree, and the staging folder is removed whatever happens.
+/// The archive formats Citra converts between, recognized by type (ZIP) or name (TAR, TAR.GZ): before the drop
+/// a `.tar.gz` and a plain `.gz` have the same type.
+enum ArchiveKind: CaseIterable, Sendable {
+    case zip, tar, tarGz
+
+    static func of(_ item: FileItem) -> ArchiveKind? {
+        guard !item.isDirectory else { return nil }
+        let name = item.url.lastPathComponent.lowercased()
+        if item.type == .zip { return .zip }
+        if name.hasSuffix(".tar.gz") || name.hasSuffix(".tgz") { return .tarGz }
+        return name.hasSuffix(".tar") ? .tar : nil
+    }
+
+    var title: String { switch self { case .zip: "ZIP"; case .tar: "TAR"; case .tarGz: "TAR.GZ" } }
+    var pathExtension: String { switch self { case .zip: "zip"; case .tar: "tar"; case .tarGz: "tar.gz" } }
+    var packFlags: [String] { switch self { case .zip: ["--format", "zip"]; case .tar: []; case .tarGz: ["-z"] } }
+
+    /// `Project.tar.gz` → `Project`, not `Project.tar`.
+    static func baseName(_ url: URL) -> String {
+        let name = url.lastPathComponent
+        let suffix = [".tar.gz", ".tgz", ".tar", ".zip"].first { name.lowercased().hasSuffix($0) }
+        return suffix.map { String(name.dropLast($0.count)) } ?? url.deletingPathExtension().lastPathComponent
+    }
+}
+
+/// `/usr/bin/tar` (bsdtar) reads and writes ZIP, TAR and TAR.GZ. Extracting, it refuses `..` entries, strips a
+/// leading `/` and never writes through a symlink, so a hostile archive cannot reach outside the target folder.
+enum Tar {
+    static let tool = URL(filePath: "/usr/bin/tar")
+    static let gzip = URL(filePath: "/usr/bin/gzip")
+
+    /// The single top-level folder of a listing (macOS `._` files aside), if everything lives inside one.
+    static func singleRoot(_ names: [String]) -> String? {
+        let paths = names.map { $0.split(separator: "/").map(String.init) }.filter { !$0.isEmpty && !$0[0].hasPrefix("._") }
+        guard let first = paths.first?.first, first != ".", first != "..", paths.allSatisfy({ $0.first == first }),
+              paths.contains(where: { $0.count > 1 })
+        else { return nil }
+        return first
+    }
+
+    static func extract(_ archive: URL, into directory: URL) async throws -> URL {
+        let root = singleRoot(try await ProcessRunner.run(tool, ["-tf", archive.path]).split(separator: "\n").map(String.init))
+        return try await OutputWriter.write(into: directory, baseName: root ?? ArchiveKind.baseName(archive), pathExtension: "") { temp in
+            try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: false)
+            try await ProcessRunner.run(tool, ["-x", "-f", archive.path, "-C", temp.path] + (root == nil ? [] : ["--strip-components", "1"]))
+        }
+    }
+
+    /// `log.txt.gz` → `log.txt`. gzip decompresses in place, so it works on a copy named after the temp file.
+    static func gunzip(_ file: URL, into directory: URL) async throws -> URL {
+        let inner = file.deletingPathExtension()
+        return try await OutputWriter.write(into: directory, baseName: inner.deletingPathExtension().lastPathComponent,
+                                            pathExtension: inner.pathExtension) { temp in
+            let packed = temp.appendingPathExtension("gz")
+            defer { try? FileManager.default.removeItem(at: packed) } // gone after success; left over after a failure
+            try FileManager.default.copyItem(at: file, to: packed)
+            try await ProcessRunner.run(gzip, ["-d", "-n", "-f", "--", packed.path])
+        }
+    }
+}
+
+/// ZIP, TAR, TAR.GZ → each other: a real repack. The source is extracted into a hidden staging folder next to
+/// it (ZIP through the same safe extraction as Extract, TAR through `/usr/bin/tar`), `/usr/bin/tar` packs that
+/// tree, and the staging folder is removed whatever happens.
 struct RepackArchive: FileAction {
-    let gzip: Bool
-    static let tar = URL(filePath: "/usr/bin/tar")
+    let target: ArchiveKind
 
-    var id: String { gzip ? "zip.targz" : "zip.tar" }
-    var title: String { gzip ? "TAR.GZ" : "TAR" }
-    var isAvailable: Bool { FileManager.default.isExecutableFile(atPath: Self.tar.path) }
+    var id: String { "archive.\(target == .tarGz ? "targz" : target.pathExtension)" }
+    var title: String { target.title }
+    var isAvailable: Bool { FileManager.default.isExecutableFile(atPath: Tar.tool.path) }
 
-    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { !$0.isDirectory && $0.type == .zip } }
+    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { ArchiveKind.of($0).map { $0 != target } ?? false } }
     func centerText(for items: [FileItem]) -> String? { conversionText(items, to: title) }
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
@@ -107,17 +168,22 @@ struct RepackArchive: FileAction {
             try Task.checkCancellation()
             let directory = OutputWriter.destination(for: item.url) // staging lives where the result goes
             guard fm.isWritableFile(atPath: directory.path) else { throw OutputWriter.Failure.notWritable(directory) }
-            let zip = try ZipReader(url: item.url)
+            let zip = ArchiveKind.of(item) == .zip ? try ZipReader(url: item.url) : nil
             let staging = directory.appending(path: ".citra-staging-\(UUID().uuidString)", directoryHint: .isDirectory)
             try fm.createDirectory(at: staging, withIntermediateDirectories: false)
             defer { try? fm.removeItem(at: staging) } // best effort cleanup of our own temp tree
-            try ZipExtractor.extract(zip, into: staging, stripping: 0,
-                                     progress: Progress(totalUnitCount: 1, parent: progress, pendingUnitCount: 1))
+            if let zip {
+                try ZipExtractor.extract(zip, into: staging, stripping: 0,
+                                         progress: Progress(totalUnitCount: 1, parent: progress, pendingUnitCount: 1))
+            } else {
+                try await ProcessRunner.run(Tar.tool, ["-x", "-f", item.url.path, "-C", staging.path])
+                progress.completedUnitCount += 1
+            }
             let top = try fm.contentsOfDirectory(atPath: staging.path).sorted()
-            outputs.append(try await OutputWriter.write(into: directory, baseName: item.url.deletingPathExtension().lastPathComponent,
-                                                        pathExtension: gzip ? "tar.gz" : "tar") { temp in
-                try await ProcessRunner.run(Self.tar, ["-c"] + (gzip ? ["-z"] : []) + ["--no-mac-metadata", "-f", temp.path,
-                                                      "-C", staging.path, "--"] + top,
+            outputs.append(try await OutputWriter.write(into: directory, baseName: ArchiveKind.baseName(item.url),
+                                                        pathExtension: target.pathExtension) { temp in
+                try await ProcessRunner.run(Tar.tool, ["-c"] + target.packFlags + ["--no-mac-metadata", "-f", temp.path,
+                                                       "-C", staging.path, "--"] + top,
                                             environment: ["COPYFILE_DISABLE": "1"])
             })
             progress.completedUnitCount += 1

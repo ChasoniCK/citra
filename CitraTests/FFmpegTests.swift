@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+import UniformTypeIdentifiers
 @testable import Citra
 
 struct FFmpegTests {
@@ -31,5 +32,20 @@ struct FFmpegTests {
         #expect(args[i + 1] == input.path)
         #expect(args.last == output.path)
         #expect(args.contains("pipe:1"))
+    }
+
+    /// By file kind, independent of the installed ffmpeg: audio never gets video targets, video never gets the
+    /// new audio ones, and videos AVFoundation opens keep their native MP4/MOV/GIF actions.
+    @Test func inputKindsDoNotMix() throws {
+        func targets(_ name: String) throws -> [String] {
+            let url = URL(filePath: "/tmp/\(name)")
+            let item = FileItem(url: url, type: try #require(UTType(filenameExtension: url.pathExtension)))
+            return FFmpegFormat.all.filter { FFmpegConverter(format: $0).isApplicable(to: [item]) }.map(\.ext)
+        }
+        #expect(try targets("song.mp3") == ["m4a", "wav", "flac", "ogg", "opus", "aiff", "wma"])
+        #expect(try targets("voice.opus") == ["mp3", "m4a", "wav", "flac", "ogg", "aiff", "wma"])
+        #expect(try !targets("take.aif").contains("aiff"))
+        #expect(try targets("clip.mkv") == ["mp4", "mov", "webm", "avi", "wmv", "gif", "mp3"])
+        #expect(try targets("clip.mp4") == ["mkv", "webm", "avi", "wmv", "mp3"])
     }
 }

@@ -3,19 +3,30 @@ import Foundation
 
 /// A target container ffmpeg writes and the encoders it needs; the format is offered only when all exist.
 struct FFmpegFormat: Sendable {
+    /// Which dropped files the format is offered for.
+    enum Input: Sendable { case video, videoOrAudio, audio }
+
     let title: String
     let ext: String
     let muxer: String
     let arguments: [String]
     let encoders: [String]
-    var audioOnly = false
+    var input = Input.video
+    /// Other extensions of the same format, so `take.aif` is not offered AIFF.
+    var aliases: [String] = []
+
+    private static let h264 = ["-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p",
+                               "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart"]
+    /// Same limits as `VideoToGIF`, with a generated palette instead of the default 256 web colors.
+    private static let gif = ["-t", "\(Int(VideoToGIF.maxSeconds))", "-vf",
+                              "fps=\(Int(VideoToGIF.fps)),scale=\(Int(VideoToGIF.maxSide)):\(Int(VideoToGIF.maxSide))"
+                                  + ":force_original_aspect_ratio=decrease,split[a][b];[a]palettegen[p];[b][p]paletteuse",
+                              "-loop", "0"]
 
     static let all: [FFmpegFormat] = [
-        // For files AVFoundation cannot open; MOV → MP4 goes through AVFoundation.
-        FFmpegFormat(title: "MP4", ext: "mp4", muxer: "mp4",
-                     arguments: ["-c:v", "libx264", "-crf", "20", "-preset", "medium", "-pix_fmt", "yuv420p",
-                                 "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart"],
-                     encoders: ["libx264", "aac"]),
+        // Video: for files AVFoundation cannot open; MOV, MP4 and GIF of the others go through AVFoundation.
+        FFmpegFormat(title: "MP4", ext: "mp4", muxer: "mp4", arguments: h264, encoders: ["libx264", "aac"]),
+        FFmpegFormat(title: "MOV", ext: "mov", muxer: "mov", arguments: h264, encoders: ["libx264", "aac"]),
         FFmpegFormat(title: "MKV", ext: "mkv", muxer: "matroska", arguments: ["-map", "0", "-c", "copy"], encoders: []),
         FFmpegFormat(title: "WEBM", ext: "webm", muxer: "webm",
                      arguments: ["-c:v", "libvpx-vp9", "-crf", "32", "-b:v", "0", "-row-mt", "1", "-c:a", "libopus"],
@@ -26,8 +37,26 @@ struct FFmpegFormat: Sendable {
         FFmpegFormat(title: "WMV", ext: "wmv", muxer: "asf",
                      arguments: ["-c:v", "wmv2", "-b:v", "4M", "-c:a", "wmav2", "-b:a", "192k"],
                      encoders: ["wmv2", "wmav2"]),
+        FFmpegFormat(title: "GIF", ext: "gif", muxer: "gif", arguments: gif, encoders: ["gif"]),
+        // Audio: MP3 for video too; the rest only for audio files, so a video's ring does not spill into More.
         FFmpegFormat(title: "MP3", ext: "mp3", muxer: "mp3", arguments: ["-vn", "-c:a", "libmp3lame", "-q:a", "2"],
-                     encoders: ["libmp3lame"], audioOnly: true),
+                     encoders: ["libmp3lame"], input: .videoOrAudio),
+        FFmpegFormat(title: "M4A", ext: "m4a", muxer: "ipod", arguments: ["-vn", "-c:a", "aac", "-b:a", "256k"],
+                     encoders: ["aac"], input: .audio),
+        FFmpegFormat(title: "WAV", ext: "wav", muxer: "wav", arguments: ["-vn", "-c:a", "pcm_s16le"],
+                     encoders: ["pcm_s16le"], input: .audio),
+        FFmpegFormat(title: "FLAC", ext: "flac", muxer: "flac", arguments: ["-vn", "-c:a", "flac"],
+                     encoders: ["flac"], input: .audio),
+        // Homebrew's ffmpeg has no libvorbis; the built-in encoder is experimental and stereo-only.
+        FFmpegFormat(title: "OGG", ext: "ogg", muxer: "ogg",
+                     arguments: ["-vn", "-c:a", "vorbis", "-strict", "experimental", "-ac", "2", "-q:a", "6"],
+                     encoders: ["vorbis"], input: .audio),
+        FFmpegFormat(title: "OPUS", ext: "opus", muxer: "opus", arguments: ["-vn", "-c:a", "libopus", "-b:a", "160k"],
+                     encoders: ["libopus"], input: .audio),
+        FFmpegFormat(title: "AIFF", ext: "aiff", muxer: "aiff", arguments: ["-vn", "-c:a", "pcm_s16be"],
+                     encoders: ["pcm_s16be"], input: .audio, aliases: ["aif"]),
+        FFmpegFormat(title: "WMA", ext: "wma", muxer: "asf", arguments: ["-vn", "-c:a", "wmav2", "-b:a", "192k"],
+                     encoders: ["wmav2"], input: .audio),
     ]
 }
 
@@ -100,10 +129,14 @@ struct FFmpeg: Sendable {
     static let videoExtensions: Set<String> = ["mkv", "webm", "avi", "wmv", "asf", "flv", "mpg", "mpeg", "m2ts", "mts",
                                                "ts", "3gp", "ogv", "vob", "mp4", "m4v", "mov"]
 
-    static func isMedia(_ item: FileItem, audio: Bool) -> Bool {
+    static func accepts(_ item: FileItem, _ input: FFmpegFormat.Input) -> Bool {
         guard !item.isDirectory else { return false }
-        return item.conforms(to: .movie) || videoExtensions.contains(item.url.pathExtension.lowercased())
-            || (audio && item.conforms(to: .audio))
+        let video = item.conforms(to: .movie) || videoExtensions.contains(item.url.pathExtension.lowercased())
+        switch input {
+        case .video: return video
+        case .videoOrAudio: return video || item.conforms(to: .audio)
+        case .audio: return item.conforms(to: .audio)
+        }
     }
 }
 
@@ -116,8 +149,9 @@ struct FFmpegConverter: FileAction {
 
     func isApplicable(to items: [FileItem]) -> Bool {
         items.allSatisfy { item in
-            FFmpeg.isMedia(item, audio: format.audioOnly) && item.url.pathExtension.lowercased() != format.ext
-                && !(format.ext == "mp4" && Video.isVideo(item)) // AVFoundation rewraps those to MP4 itself
+            let ext = item.url.pathExtension.lowercased()
+            return FFmpeg.accepts(item, format.input) && ext != format.ext && !format.aliases.contains(ext)
+                && !(["mp4", "mov", "gif"].contains(format.ext) && Video.isVideo(item)) // AVFoundation has its own
         }
     }
 

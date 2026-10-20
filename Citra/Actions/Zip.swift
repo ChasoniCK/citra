@@ -313,27 +313,39 @@ enum ZipExtractor {
     }
 }
 
+/// ZIP through the safe extractor; TAR and TAR.GZ through `/usr/bin/tar`; a plain `.gz` is decompressed.
 struct ExtractArchive: FileAction {
-    let id = "zip.extract"
+    let id = "archive.extract"
     let title = "Extract"
     let symbol: String? = "archivebox"
 
-    func isApplicable(to items: [FileItem]) -> Bool { items.allSatisfy { !$0.isDirectory && $0.type == .zip } }
+    func isApplicable(to items: [FileItem]) -> Bool {
+        items.allSatisfy { ArchiveKind.of($0) != nil || (!$0.isDirectory && $0.url.pathExtension.lowercased() == "gz") }
+    }
     func centerText(for items: [FileItem]) -> String? { "Extract" }
 
     func perform(items: [FileItem], progress: Progress) async throws -> ActionResult {
         var outputs: [URL] = []
         for item in items {
             try Task.checkCancellation()
-            let zip = try ZipReader(url: item.url)
-            let root = ZipExtractor.singleRoot(zip)
             let child = Progress(totalUnitCount: 1, parent: progress, pendingUnitCount: 1)
-            outputs.append(try await OutputWriter.write(into: OutputWriter.destination(for: item.url),
-                                                        baseName: root ?? item.url.deletingPathExtension().lastPathComponent,
-                                                        pathExtension: "") { temp in
-                try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: false)
-                try ZipExtractor.extract(zip, into: temp, stripping: root == nil ? 0 : 1, progress: child)
-            })
+            let directory = OutputWriter.destination(for: item.url)
+            switch ArchiveKind.of(item) {
+            case .zip:
+                let zip = try ZipReader(url: item.url)
+                let root = ZipExtractor.singleRoot(zip)
+                outputs.append(try await OutputWriter.write(into: directory,
+                                                            baseName: root ?? item.url.deletingPathExtension().lastPathComponent,
+                                                            pathExtension: "") { temp in
+                    try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: false)
+                    try ZipExtractor.extract(zip, into: temp, stripping: root == nil ? 0 : 1, progress: child)
+                })
+            case .tar, .tarGz:
+                outputs.append(try await Tar.extract(item.url, into: directory))
+            case nil:
+                outputs.append(try await Tar.gunzip(item.url, into: directory))
+            }
+            child.completedUnitCount = 1
         }
         return ActionResult(files: outputs)
     }
@@ -341,7 +353,7 @@ struct ExtractArchive: FileAction {
 
 /// Decompresses every entry and checks its CRC-32 without writing anything.
 struct TestArchive: FileAction {
-    let id = "zip.test"
+    let id = "archive.test"
     let title = "Test"
     let symbol: String? = "checkmark.seal"
 

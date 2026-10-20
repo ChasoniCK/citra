@@ -9,7 +9,10 @@ struct ImageConverterTests {
     let folder: TestFolder
     init() throws { folder = try TestFolder() }
 
-    func ids(_ items: [FileItem]) -> [String] { Registry.actions(for: .conversion, items: items).map(\.id) }
+    /// WebP depends on cwebp being installed, so it has its own test.
+    func ids(_ items: [FileItem]) -> [String] {
+        Registry.actions(for: .conversion, items: items).map(\.id).filter { $0 != "image.webp" }
+    }
     func item(_ url: URL) -> FileItem { FileTypeResolver.resolve(url) }
     func action(_ id: String) throws -> any FileAction { try #require(Registry.all(for: .conversion).first { $0.id == id }) }
 
@@ -32,16 +35,16 @@ struct ImageConverterTests {
     // MARK: Applicability
 
     @Test func pngOffersEveryOtherFormat() throws {
-        #expect(ids([item(try folder.image("a.png"))]) == ["image.jpeg", "image.heic", "image.tiff", "image.pdf"])
+        #expect(ids([item(try folder.image("a.png"))]) == ["image.jpeg", "image.heic", "image.tiff", "image.avif", "image.bmp", "image.pdf"])
     }
 
     @Test func jpegOffersPNGButNotJPEG() throws {
-        #expect(ids([item(try folder.image("a.jpg", type: .jpeg))]) == ["image.png", "image.heic", "image.tiff", "image.pdf"])
+        #expect(ids([item(try folder.image("a.jpg", type: .jpeg))]) == ["image.png", "image.heic", "image.tiff", "image.avif", "image.bmp", "image.pdf"])
     }
 
     @Test func mixedSelectionOffersOnlyWhatSuitsAll() throws {
         let items = [item(try folder.image("a.png")), item(try folder.image("b.jpg", type: .jpeg))]
-        #expect(ids(items) == ["image.heic", "image.tiff", "image.pdf"])
+        #expect(ids(items) == ["image.heic", "image.tiff", "image.avif", "image.bmp", "image.pdf"])
     }
 
     @Test func foldersAndTextGetNoImageConversions() throws {
@@ -72,11 +75,36 @@ struct ImageConverterTests {
         #expect(progress.fractionCompleted == 1)
     }
 
-    @Test(arguments: [("image.heic", UTType.heic, "img.heic"), ("image.tiff", .tiff, "img.tiff")])
+    @Test(arguments: [("image.heic", UTType.heic, "img.heic"), ("image.tiff", .tiff, "img.tiff"),
+                      ("image.avif", UTType("public.avif")!, "img.avif"), ("image.bmp", .bmp, "img.bmp")]) // safe: system type
     func pngToOtherEncoders(_ c: (String, UTType, String)) async throws {
         let out = try await action(c.0).perform(items: [item(try folder.image("img.png"))], progress: Progress()).files
         #expect(out.map(\.lastPathComponent) == [c.2])
         #expect(typeOf(out[0]) == c.1.identifier)
+    }
+
+    /// SVG is rasterized by AppKit (ImageIO cannot read it), long side at least 1024 px; no tools, since nothing writes SVG back.
+    @Test func svgConvertsToPNGAtLeast1024Wide() async throws {
+        let svg = item(try folder.file("logo.svg", Data(#"<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="40" height="20" fill="red"/></svg>"#.utf8)))
+        #expect(ids([svg]).contains("image.png"))
+        #expect(Registry.actions(for: .tools, items: [svg]).allSatisfy { !$0.id.hasPrefix("image.") })
+        let out = try await action("image.png").perform(items: [svg], progress: Progress()).files
+        #expect(out.map(\.lastPathComponent) == ["logo.png"])
+        let image = try #require(CGImageSourceCreateWithURL(out[0] as CFURL, nil).flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) })
+        #expect((image.width, image.height) == (1024, 512))
+        let (r, g, b) = try rgb(at: 10, 10, of: out[0])
+        #expect(r > 240 && g < 20 && b < 20)
+    }
+
+    /// cwebp ignores EXIF orientation, so the pixels must be rotated before encoding.
+    @Test(.enabled(if: WebPConverter.cwebp != nil))
+    func rotatedJPEGBecomesUprightWebP() async throws {
+        let jpeg = try folder.image("img.jpg", type: .jpeg, width: 16, height: 8, properties: [kCGImagePropertyOrientation: 6])
+        let out = try await action("image.webp").perform(items: [item(jpeg)], progress: Progress()).files
+        #expect(out.map(\.lastPathComponent) == ["img.webp"])
+        #expect(typeOf(out[0]) == UTType.webP.identifier)
+        let image = try #require(CGImageSourceCreateWithURL(out[0] as CFURL, nil).flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) })
+        #expect((image.width, image.height) == (8, 16))
     }
 
     @Test func jpegToPNG() async throws {

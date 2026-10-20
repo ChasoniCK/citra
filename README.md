@@ -35,18 +35,23 @@
 
 | Тип | ⌘ Conversion | ⇧ Tools |
 |---|---|---|
-| Изображения (всё, что читает ImageIO: PNG, JPEG, HEIC, TIFF, GIF, BMP, WebP…) | JPEG, PNG, HEIC, TIFF (кроме собственного формата), PDF | Resize (пресеты), Rotate 90°, Compress (только JPEG/HEIC), Metadata (убрать EXIF/GPS/IPTC/XMP) |
-| ZIP | TAR, TAR.GZ | Extract, Test |
+| Изображения (всё, что читает ImageIO: PNG, JPEG, HEIC, TIFF, GIF, BMP, WebP, AVIF…; SVG только на вход) | JPEG, PNG, HEIC, TIFF, AVIF, BMP, WebP (с cwebp) — кроме собственного формата, PDF | Resize (пресеты), Rotate 90°, Compress (только JPEG/HEIC), Metadata (убрать EXIF/GPS/IPTC/XMP); для SVG — нет |
+| ZIP, TAR, TAR.GZ / TGZ | друг в друга (ZIP, TAR, TAR.GZ) | Extract; Test — только ZIP |
+| GZ (одиночный файл) | — | Extract |
 | Видео, которое открывает AVFoundation (MP4, MOV, M4V) | MOV ⇄ MP4 (без перекодирования), M4A, GIF; с ffmpeg — MKV, WebM, AVI, WMV, MP3 | Compress (720p), Mute, Trim, Crop, Speed, Snapshot |
-| Видео, которое AVFoundation не открывает (MKV, WebM, AVI, WMV…) — только с ffmpeg | MP4, MKV, WebM, AVI, WMV, MP3 (кроме собственного формата) | — |
-| Аудио — только с ffmpeg | MP3 | — |
+| Видео, которое AVFoundation не открывает (MKV, WebM, AVI, WMV…) — только с ffmpeg | MP4, MOV, MKV, WebM, AVI, WMV, GIF, MP3 (кроме собственного формата) | — |
+| Аудио (MP3, M4A, WAV, FLAC, OGG, Opus, AIFF, WMA…) — только с ffmpeg | MP3, M4A, WAV, FLAC, OGG, Opus, AIFF, WMA (кроме собственного формата) | — |
+| Субтитры SRT, VTT | SRT ⇄ VTT, TXT (текст без тегов и повторов) | — |
 | PDF | — | Merge (2 и больше), Split (по странице в файл) |
 
 ⌃ File Actions для любых файлов и папок: AirDrop, Float (плавающая полка), Copy (⌘V в Finder вставляет сами файлы), Move (с вопросом при конфликте имён), Copy Path, Terminal.
 
 **От чего зависит доступность:**
 - **HEIC** — от кодировщика ImageIO (на Apple Silicon есть).
-- **TAR** — от `/usr/bin/tar`.
+- **TAR, TAR.GZ и конвертация архивов** — от `/usr/bin/tar`; одиночный GZ — от `/usr/bin/gzip`. Архив с путями через `..` не распаковывается и не конвертируется.
+- **WebP** — от `cwebp` в тех же папках, что и ffmpeg (`brew install webp`): ImageIO WebP только читает.
+- **SVG** растеризуется: длинная сторона не меньше 1024 px.
+- **OGG** — встроенным экспериментальным кодером Vorbis из ffmpeg (в Homebrew-сборке нет libvorbis): всегда стерео, качество ниже, чем у libvorbis. Обложка альбома при конвертации аудио не переносится; WAV и AIFF — 16 бит.
 - **Форматы через ffmpeg** — от `ffmpeg` в `/opt/homebrew/bin` или `/usr/local/bin` и нужных кодировщиков в нём. ffmpeg не встраивается в приложение; статус и подсказка — в Settings → Conversions.
 - **Terminal / iTerm2** — от того, что выбрано в настройках и установлено на Mac.
 - **M4A и Mute для видео без звука, Split для одностраничного PDF** — до drop Citra файлы не читает, чтобы macOS не запрашивала доступ к папкам. Поэтому эти действия показываются всегда, а при drop сообщают, почему не сработали, и ничего не создают.
