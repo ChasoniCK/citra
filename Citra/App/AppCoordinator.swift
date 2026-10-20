@@ -21,6 +21,7 @@ final class AppCoordinator {
         monitor.onBegin = { [unowned self] urls in
             items = urls.map(FileTypeResolver.resolve)
             panel.sessionBegan()
+            Task { [items] in await MediaInfo.load(items) } // audio tracks, so silent videos get no Mute / M4A
         }
         monitor.onModeChange = { [unowned self] mode in
             guard let mode else { return panel.hide() }
