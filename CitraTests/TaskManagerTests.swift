@@ -118,8 +118,8 @@ struct RegistryTests {
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let png = FileTypeResolver.resolve(try folder.image("a.png"))
         for items in [[png], [FileTypeResolver.resolve(dir)], [png, FileTypeResolver.resolve(dir)]] {
-            #expect(ids(.fileActions, items).contains("copy"))
-            #expect(ids(.fileActions, items).contains("copyPath"))
+            #expect(ids(.fileActions, items).contains("file.copy"))
+            #expect(ids(.fileActions, items).contains("file.copyPath"))
         }
     }
 }

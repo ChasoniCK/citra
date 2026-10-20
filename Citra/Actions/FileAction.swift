@@ -36,7 +36,7 @@ enum Registry {
         case .tools:
             [ResizeImage(), RotateImage(), CompressImage(), RemoveImageMetadata(), ExtractArchive(), TestArchive(),
              VideoSnapshot(), MuteVideo()]
-        case .fileActions: [CopyFilesAction(), CopyPathAction()]
+        case .fileActions: [AirDropAction(), FloatAction(), CopyFilesAction(), MoveAction(), CopyPathAction(), OpenInTerminal()]
         }
     }
 
